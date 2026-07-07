@@ -333,6 +333,11 @@ $$('.nav-link').forEach(link => {
             toast('登录后就能用啦~', 'info');
             return;
         }
+        if (page === 'practice') {
+            // 顶部"开始练习" = 快速随机10道(等同首页"快速练习")
+            startPractice({ grade: state.user.grade, count: 10 });
+            return;
+        }
         if (page === 'report') loadReport();
         if (page === 'wrong') loadWrongQuestions();
         showPage(page);
