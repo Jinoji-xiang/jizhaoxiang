@@ -1138,6 +1138,122 @@ input:focus, select:focus {
 }
 .btn-flee:hover { background: var(--border-soft); color: var(--text); }
 
+/* 金币显示 (在 battle-hud 右上) */
+.gold-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: #92400E;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.gold-display .gold-icon {
+  font-size: 14px;
+  filter: drop-shadow(0 1px 0 rgba(180, 83, 9, 0.4));
+}
+.gold-display.flash {
+  animation: goldFlash 0.6s ease-out;
+}
+@keyframes goldFlash {
+  0%   { transform: scale(1); background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); }
+  40%  { transform: scale(1.18); background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%); }
+  100% { transform: scale(1); background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); }
+}
+
+/* 技能槽 */
+.skill-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-radius: var(--r);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-sm);
+}
+.skill-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+  border: 2px solid #E0E7FF;
+  border-radius: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(.22,.61,.36,1);
+  position: relative;
+  text-align: left;
+}
+.skill-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.3);
+}
+.skill-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.skill-btn .skill-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.skill-btn .skill-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+}
+.skill-btn .skill-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  background: var(--primary);
+  color: white;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.skill-btn.used {
+  background: var(--border-soft);
+  border-color: var(--border);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.skill-btn.used .skill-icon {
+  filter: grayscale(0.6);
+}
+.skill-btn.used .skill-name {
+  color: var(--text-mute);
+}
+.skill-btn.used .skill-count {
+  background: var(--text-mute);
+}
+.skill-btn.fired {
+  animation: skillFire 0.5s ease-out;
+}
+@keyframes skillFire {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6); }
+  50%  { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+@media (max-width: 720px) {
+  .skill-bar { padding: 10px; gap: 8px; }
+  .skill-btn { padding: 8px 10px; gap: 6px; }
+  .skill-btn .skill-icon { font-size: 18px; }
+  .skill-btn .skill-name { font-size: 12px; }
+}
+
 /* 战斗场地 */
 .battle-stage {
   position: relative;
@@ -1244,6 +1360,9 @@ input:focus, select:focus {
 }
 
 /* 怪兽立绘 - 史莱姆 单 div + 渐变 */
+/* ===== 怪兽图鉴：8 只怪兽 CSS 像素艺术 =====
+   基础 .monster-sprite 只负责布局与动画；具体外观由 .sprite-* 变体类绘制。
+   风格与史莱姆一致：单 div + 多层背景/box-shadow + 细节子元素。 */
 .monster-sprite {
   position: absolute;
   right: 12%;
@@ -1253,41 +1372,247 @@ input:focus, select:focus {
   height: 70px;
   display: block;
   transition: filter 0.1s;
-  /* 史莱姆身体:椭圆形,绿色渐变 */
+}
+/* 细节子元素默认隐藏，由各 sprite 变体按需启用 */
+.monster-sprite .m-detail,
+.monster-sprite .m-halo,
+.monster-sprite .slime-mouth { display: none; position: absolute; }
+
+/* ---------- 史莱姆 Slime（绿）：椭圆身体 ---------- */
+.sprite-slime {
   background: linear-gradient(180deg, #4ADE80 0%, #22C55E 70%, #16A34A 100%);
   border-radius: 50% 50% 45% 45% / 60% 60% 35% 35%;
   box-shadow:
     inset -8px -4px 0 rgba(0, 0, 0, 0.15),
     inset 4px 4px 0 rgba(255, 255, 255, 0.4),
-    0 4px 0 #15803D;  /* 底部阴影 */
+    0 4px 0 #15803D;
 }
-/* 史莱姆眼睛 - 用 ::before (左) ::after (右) */
-.monster-sprite::before {
-  content: '';
-  position: absolute;
-  width: 10px; height: 12px;
-  background: #1F2937;
-  border-radius: 50%;
-  top: 22px; left: 22px;
-  box-shadow: 26px 0 0 #1F2937;  /* 第二个眼睛 */
+.sprite-slime::before { /* 眼睛（左 + box-shadow 右） */
+  content: ''; position: absolute;
+  width: 10px; height: 12px; background: #1F2937; border-radius: 50%;
+  top: 22px; left: 22px; box-shadow: 26px 0 0 #1F2937;
 }
-/* 史莱姆高光 - 在 .monster-sprite 上加 linear-gradient 模拟 */
-.monster-sprite .slime-mouth {
-  position: absolute;
-  width: 20px; height: 8px;
-  background: #1F2937;
-  border-radius: 0 0 20px 20px;
-  top: 42px; left: 50%;
-  transform: translateX(-50%);
+.sprite-slime .slime-mouth { /* 嘴 */
+  display: block; width: 20px; height: 8px; background: #1F2937;
+  border-radius: 0 0 20px 20px; top: 42px; left: 50%; transform: translateX(-50%);
 }
-/* 史莱姆顶部高光 - 用 ::after 模拟 */
-.monster-sprite::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 8px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  top: 14px; left: 18px;
+.sprite-slime::after { /* 顶部高光 */
+  content: ''; position: absolute;
+  width: 14px; height: 8px; background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%; top: 14px; left: 18px;
+}
+
+/* ---------- 幽灵 Ghost（紫）：飘浮 + 波浪裙摆 ---------- */
+.sprite-ghost {
+  background: linear-gradient(180deg, #C084FC 0%, #9333EA 65%, #7E22CE 100%);
+  border-radius: 50% 50% 18% 18% / 62% 62% 22% 22%;
+  box-shadow:
+    inset -8px -4px 0 rgba(0, 0, 0, 0.18),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.35),
+    0 0 18px rgba(168, 85, 247, 0.6);
+}
+.sprite-ghost::before { /* 眼睛 */
+  content: ''; position: absolute;
+  width: 11px; height: 14px; background: #1F2937; border-radius: 50%;
+  top: 20px; left: 22px; box-shadow: 24px 0 0 #1F2937;
+}
+.sprite-ghost::after { /* 额头高光 */
+  content: ''; position: absolute;
+  width: 12px; height: 7px; background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%; top: 12px; left: 20px;
+}
+.sprite-ghost .m-detail.d1 { /* 圆嘴 */
+  display: block; width: 12px; height: 14px; background: #1F2937; border-radius: 50%;
+  left: 50%; top: 40px; transform: translateX(-50%);
+}
+.sprite-ghost .m-detail.d2 { /* 波浪裙摆 */
+  display: block; width: 16px; height: 16px; background: #7E22CE; border-radius: 50%;
+  bottom: -6px; left: 8px; box-shadow: 20px 0 0 #7E22CE, 40px 0 0 #7E22CE;
+}
+
+/* ---------- 机器人 Robot（橙）：方头 + 天线 ---------- */
+.sprite-robot {
+  background: linear-gradient(180deg, #FDBA74 0%, #FB923C 55%, #EA580C 100%);
+  border-radius: 14px 14px 10px 10px;
+  box-shadow:
+    inset -6px -6px 0 rgba(0, 0, 0, 0.2),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.4),
+    0 4px 0 #9A3412;
+}
+.sprite-robot::before { /* 矩形电子眼 */
+  content: ''; position: absolute;
+  width: 14px; height: 10px; background: #22D3EE; border-radius: 2px;
+  top: 22px; left: 15px; box-shadow: 24px 0 0 #22D3EE;
+}
+.sprite-robot::after { /* 齿状嘴 */
+  content: ''; position: absolute;
+  width: 36px; height: 8px; background: #7C2D12; border-radius: 2px;
+  top: 44px; left: 50%; transform: translateX(-50%);
+  box-shadow: inset 6px 0 0 #FB923C, inset -6px 0 0 #FB923C;
+}
+.sprite-robot .m-detail.d1 { /* 天线杆 */
+  display: block; width: 4px; height: 12px; background: #9A3412;
+  left: 50%; top: -12px; transform: translateX(-50%);
+}
+.sprite-robot .m-detail.d2 { /* 天线灯 */
+  display: block; width: 10px; height: 10px; background: #FBBF24; border-radius: 50%;
+  left: 50%; top: -20px; transform: translateX(-50%); box-shadow: 0 0 8px #FBBF24;
+}
+
+/* ---------- 小龙 Wyvern（红）：龙头 + 双翼 + 犄角 ---------- */
+.sprite-wyvern {
+  background: linear-gradient(180deg, #F87171 0%, #EF4444 60%, #B91C1C 100%);
+  border-radius: 45% 45% 40% 40% / 55% 55% 45% 45%;
+  box-shadow:
+    inset -8px -5px 0 rgba(0, 0, 0, 0.22),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.3),
+    0 4px 0 #7F1D1D;
+}
+.sprite-wyvern::before { /* 愤怒黄眼 */
+  content: ''; position: absolute;
+  width: 12px; height: 8px; background: #FDE047; border-radius: 50% 50% 20% 20%;
+  top: 20px; left: 20px; box-shadow: 26px 0 0 #FDE047; transform: rotate(-8deg);
+}
+.sprite-wyvern::after { /* 犄角（drop-shadow 复制第二个） */
+  content: ''; position: absolute;
+  width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-bottom: 14px solid #B91C1C; top: -10px; left: 14px;
+  filter: drop-shadow(38px 0 0 #B91C1C);
+}
+.sprite-wyvern .m-detail.d1 { /* 左翼 */
+  display: block; width: 24px; height: 30px;
+  background: linear-gradient(135deg, #EF4444, #7F1D1D);
+  border-radius: 60% 10% 60% 10%; left: -16px; top: 16px; transform: rotate(-18deg); z-index: -1;
+}
+.sprite-wyvern .m-detail.d2 { /* 右翼 */
+  display: block; width: 24px; height: 30px;
+  background: linear-gradient(-135deg, #EF4444, #7F1D1D);
+  border-radius: 10% 60% 10% 60%; right: -16px; top: 16px; transform: rotate(18deg); z-index: -1;
+}
+.sprite-wyvern .m-detail.d3 { /* 龙嘴 */
+  display: block; width: 16px; height: 6px; background: #7F1D1D; border-radius: 3px;
+  left: 50%; top: 42px; transform: translateX(-50%);
+}
+
+/* ---------- 木乃伊 Mummy（黄）：绷带条纹 + 独眼 ---------- */
+.sprite-mummy {
+  background: linear-gradient(180deg, #FEF08A 0%, #FDE047 55%, #CA8A04 100%);
+  border-radius: 45% 45% 35% 35% / 55% 55% 40% 40%;
+  box-shadow:
+    inset -7px -4px 0 rgba(0, 0, 0, 0.18),
+    inset 4px 4px 0 rgba(255, 255, 255, 0.4),
+    0 4px 0 #A16207;
+  overflow: hidden;
+}
+.sprite-mummy::before { /* 独眼从绷带缝隙露出 */
+  content: ''; position: absolute; z-index: 2;
+  width: 12px; height: 6px; background: #1F2937; border-radius: 3px;
+  top: 26px; left: 34px; transform: rotate(-6deg);
+}
+.sprite-mummy::after { /* 缠绕绷带条纹 */
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: repeating-linear-gradient(32deg, transparent 0 8px, rgba(161, 98, 4, 0.35) 8px 10px);
+}
+.sprite-mummy .m-detail.d1 { /* 高光绷带 */
+  display: block; z-index: 1; width: 60px; height: 5px; background: rgba(255, 255, 255, 0.45);
+  top: 16px; left: -6px; transform: rotate(32deg);
+}
+
+/* ---------- 骷髅王 Skeleton（黑+白）：骷髅头 + 金冠 ---------- */
+.sprite-skeleton {
+  background: linear-gradient(180deg, #F9FAFB 0%, #E5E7EB 60%, #9CA3AF 100%);
+  border-radius: 46% 46% 30% 30% / 52% 52% 48% 48%;
+  box-shadow:
+    inset -7px -4px 0 rgba(0, 0, 0, 0.2),
+    inset 4px 4px 0 rgba(255, 255, 255, 0.6),
+    0 4px 0 #4B5563;
+}
+.sprite-skeleton::before { /* 黑色眼窝 */
+  content: ''; position: absolute;
+  width: 14px; height: 16px; background: #111827; border-radius: 50%;
+  top: 20px; left: 16px; box-shadow: 26px 0 0 #111827;
+}
+.sprite-skeleton::after { /* 鼻孔三角 */
+  content: ''; position: absolute;
+  width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 9px solid #111827; top: 40px; left: 50%; transform: translateX(-50%);
+}
+.sprite-skeleton .m-detail.d1 { /* 牙齿 */
+  display: block; width: 30px; height: 8px; background: #111827;
+  left: 50%; top: 52px; transform: translateX(-50%); border-radius: 0 0 4px 4px;
+  box-shadow: inset 4px 0 0 #F9FAFB, inset -4px 0 0 #F9FAFB;
+}
+.sprite-skeleton .m-detail.d2 { /* 金冠 */
+  display: block; width: 44px; height: 14px; background: #FBBF24;
+  left: 50%; top: -8px; transform: translateX(-50%);
+  clip-path: polygon(0 100%, 0 40%, 15% 70%, 30% 0, 50% 60%, 70% 0, 85% 70%, 100% 40%, 100% 100%);
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+}
+
+/* ---------- 大魔王 Demon（紫红）：犄角 + 发光眼 + 獠牙 ---------- */
+.sprite-demon {
+  background: radial-gradient(circle at 50% 35%, #A21CAF 0%, #7E22CE 45%, #4C1D95 100%);
+  border-radius: 48% 48% 42% 42% / 55% 55% 45% 45%;
+  box-shadow:
+    inset -8px -5px 0 rgba(0, 0, 0, 0.3),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.25),
+    0 4px 0 #3B0764, 0 0 22px rgba(192, 38, 211, 0.55);
+}
+.sprite-demon::before { /* 发光红眼 */
+  content: ''; position: absolute;
+  width: 12px; height: 10px; background: #FCA5A5; border-radius: 50% 50% 20% 20%;
+  top: 22px; left: 18px; transform: rotate(-6deg);
+  box-shadow: 28px 0 0 #FCA5A5, 0 0 8px #EF4444, 28px 0 8px #EF4444;
+}
+.sprite-demon::after { /* 獠牙笑 */
+  content: ''; position: absolute;
+  width: 30px; height: 12px; background: #3B0764; border-radius: 0 0 14px 14px;
+  top: 42px; left: 50%; transform: translateX(-50%);
+  box-shadow: inset 5px -4px 0 #fff, inset -5px -4px 0 #fff;
+}
+.sprite-demon .m-detail.d1 { /* 左角 */
+  display: block; width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 4px solid transparent;
+  border-bottom: 22px solid #7E22CE; top: -16px; left: 8px; transform: rotate(-24deg);
+}
+.sprite-demon .m-detail.d2 { /* 右角 */
+  display: block; width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 8px solid transparent;
+  border-bottom: 22px solid #7E22CE; top: -16px; right: 8px; transform: rotate(24deg);
+}
+
+/* ---------- 混沌龙 Chaos（彩虹）：彩虹身 + 旋转光环 ---------- */
+.sprite-chaos {
+  background: conic-gradient(from 0deg, #ef4444, #f59e0b, #fde047, #22c55e, #06b6d4, #6366f1, #a855f7, #ef4444);
+  border-radius: 46% 46% 40% 40% / 54% 54% 46% 46%;
+  box-shadow:
+    inset -8px -5px 0 rgba(0, 0, 0, 0.25),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.4),
+    0 0 26px rgba(168, 85, 247, 0.7);
+}
+.sprite-chaos::before { /* 发光白眼 */
+  content: ''; position: absolute; z-index: 2;
+  width: 12px; height: 12px; background: #fff; border-radius: 50%;
+  top: 22px; left: 20px; box-shadow: 26px 0 0 #fff, 0 0 10px #fff, 26px 0 10px #fff;
+}
+.sprite-chaos .m-detail.d1 { /* 嘴 */
+  display: block; z-index: 2; width: 18px; height: 8px; background: #1e1b4b;
+  border-radius: 0 0 10px 10px; left: 50%; top: 42px; transform: translateX(-50%);
+}
+.sprite-chaos .m-halo { /* 旋转彩虹光环 */
+  display: block; width: 110px; height: 110px; left: 50%; top: 50%; margin: -55px 0 0 -55px;
+  border-radius: 50%; z-index: -1;
+  background: conic-gradient(from 0deg, #ef4444, #f59e0b, #22c55e, #06b6d4, #a855f7, #ef4444);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+  animation: chaosHalo 4s linear infinite;
+}
+@keyframes chaosHalo { to { transform: rotate(360deg); } }
+/* 混沌龙专属 idle：彩虹变色 + 摆动漂浮 */
+.monster-sprite.sprite-chaos.idle { animation: chaosIdle 3s ease-in-out infinite; }
+@keyframes chaosIdle {
+  0%, 100% { transform: translateY(0) rotate(-3deg); filter: hue-rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); filter: hue-rotate(180deg); }
 }
 
 .monster-sprite.idle { animation: monsterIdle 1.8s ease-in-out infinite; }
@@ -1932,9 +2257,367 @@ input:focus, select:focus {
 /* 隐藏原来 hero 里的内联登录卡片(现在用弹窗) */
 .login-card { display: none !important; }
 
+/* ==========================================================
+   顶栏 成就按钮
+   ========================================================== */
+.nav-trophy-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 1.5px solid #FCD34D;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.18s cubic-bezier(.22,.61,.36,1);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+  padding: 0;
+  font-family: inherit;
+}
+.nav-trophy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+  filter: brightness(1.05);
+}
+.nav-trophy-btn:active { transform: translateY(0); }
+.trophy-emoji { line-height: 1; }
+.trophy-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--danger);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  line-height: 1;
+}
+.trophy-badge[hidden] { display: none; }
+
+/* ==========================================================
+   成就弹窗
+   ========================================================== */
+.achievement-dialog { max-width: 460px; padding: 32px 28px 24px; }
+.achievement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--border-soft);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  transition: all 0.18s;
+}
+.achievement-item.unlocked {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-color: #FCD34D;
+  box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.25);
+}
+.achievement-item .ach-emoji {
+  font-size: 32px;
+  line-height: 1;
+  filter: grayscale(1) opacity(0.35);
+  flex-shrink: 0;
+  width: 44px;
+  text-align: center;
+}
+.achievement-item.unlocked .ach-emoji {
+  filter: none;
+  animation: achPop 0.5s cubic-bezier(.22,1.5,.36,1);
+}
+@keyframes achPop {
+  0%   { transform: scale(0.6); }
+  60%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.achievement-item .ach-info { flex: 1; min-width: 0; }
+.achievement-item .ach-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-mute);
+  margin-bottom: 2px;
+  letter-spacing: -0.01em;
+}
+.achievement-item.unlocked .ach-title { color: #92400E; }
+.achievement-item .ach-desc {
+  font-size: 12px;
+  color: var(--text-mute);
+  line-height: 1.4;
+}
+.achievement-item.unlocked .ach-desc { color: #B45309; }
+.achievement-item .ach-status {
+  font-size: 20px;
+  color: var(--text-mute);
+  flex-shrink: 0;
+}
+.achievement-item.unlocked .ach-status { color: #F59E0B; }
+
+/* 成就解锁 toast */
+.toast.achievement-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-size: 14px;
+  background: linear-gradient(135deg, #F59E0B, #FB923C);
+  color: white;
+}
+.toast.achievement-toast::before {
+  content: '🏆';
+  font-size: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
 @media (max-width: 600px) {
   .nav-login-btn { padding: 7px 12px; font-size: 13px; }
   .modal-dialog { padding: 28px 22px 22px; border-radius: 20px; }
   .modal-title { font-size: 20px; }
   .modal-emoji { font-size: 40px; }
+}
+
+/* ============================================================
+   P6 · 关卡地图 (RPG 风格)
+   ============================================================ */
+
+/* 主题色变量 — 7 个区域 */
+.map-card[data-color="green"]   { --map-c1: #10B981; --map-c2: #059669; --map-bg-1: #D1FAE5; --map-bg-2: #A7F3D0; }
+.map-card[data-color="purple"]  { --map-c1: #8B5CF6; --map-c2: #6D28D9; --map-bg-1: #EDE9FE; --map-bg-2: #DDD6FE; }
+.map-card[data-color="orange"]  { --map-c1: #F97316; --map-c2: #C2410C; --map-bg-1: #FED7AA; --map-bg-2: #FDBA74; }
+.map-card[data-color="cyan"]    { --map-c1: #06B6D4; --map-c2: #0E7490; --map-bg-1: #CFFAFE; --map-bg-2: #A5F3FC; }
+.map-card[data-color="yellow"]  { --map-c1: #EAB308; --map-c2: #A16207; --map-bg-1: #FEF9C3; --map-bg-2: #FDE68A; }
+.map-card[data-color="red"]     { --map-c1: #EF4444; --map-c2: #B91C1C; --map-bg-1: #FEE2E2; --map-bg-2: #FECACA; }
+.map-card[data-color="magenta"] { --map-c1: #D946EF; --map-c2: #A21CAF; --map-bg-1: #FAE8FF; --map-bg-2: #F5D0FE; }
+
+.page-sub {
+  color: var(--text-soft);
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 18px;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+  margin: 8px 0 24px;
+}
+
+.map-card {
+  position: relative;
+  background: linear-gradient(160deg, var(--map-bg-1) 0%, var(--map-bg-2) 100%);
+  border-radius: var(--r-lg);
+  padding: 22px 18px 18px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow);
+  transition: transform 0.22s cubic-bezier(.22,1.2,.36,1), box-shadow 0.22s, border-color 0.22s;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+  user-select: none;
+}
+
+/* 顶部装饰条 */
+.map-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--map-c1) 0%, var(--map-c2) 100%);
+  z-index: 1;
+}
+
+/* 背景圆形光晕 */
+.map-card::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle at 80% 0%, rgba(255,255,255,0.55) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.map-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 36px -6px rgba(99, 102, 241, 0.32), 0 4px 12px rgba(0,0,0,0.08);
+  border-color: var(--map-c1);
+}
+
+.map-card:active {
+  transform: translateY(-1px) scale(1.0);
+}
+
+.map-card-icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  position: relative;
+  z-index: 2;
+  animation: mapIconFloat 3s ease-in-out infinite;
+}
+
+@keyframes mapIconFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+.map-card-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+  position: relative;
+  z-index: 2;
+}
+
+.map-card-monster {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--map-c2);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.map-card-status {
+  position: relative;
+  z-index: 2;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0,0,0,0.12);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.map-card-stars {
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--map-c1), var(--map-c2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 16px;
+}
+
+/* 已通关 (全三星) */
+.map-card.cleared {
+  border-color: var(--map-c1);
+}
+.map-card.cleared .map-card-icon {
+  filter: drop-shadow(0 4px 12px var(--map-c1));
+}
+
+/* 当前关卡 (最新解锁) */
+.map-card.current {
+  border-color: var(--map-c1);
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.12), var(--shadow);
+}
+.map-card.current::before {
+  height: 6px;
+  background: linear-gradient(90deg, var(--map-c1) 0%, var(--map-c2) 50%, var(--map-c1) 100%);
+  background-size: 200% 100%;
+  animation: mapCurrentPulse 2s linear infinite;
+}
+@keyframes mapCurrentPulse {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.map-card.current .map-card-name::after {
+  content: '新';
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  background: linear-gradient(135deg, var(--map-c1), var(--map-c2));
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
+/* 锁定状态 */
+.map-card.locked {
+  background: linear-gradient(160deg, #E5E7EB 0%, #D1D5DB 100%);
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+.map-card.locked:hover {
+  transform: none;
+  border-color: transparent;
+  box-shadow: var(--shadow);
+}
+.map-card.locked::before {
+  background: linear-gradient(90deg, #9CA3AF 0%, #6B7280 100%);
+}
+.map-card.locked .map-card-icon {
+  animation: none;
+  filter: grayscale(1) opacity(0.55);
+}
+.map-card.locked .map-card-name {
+  color: var(--text-soft);
+}
+.map-card.locked .map-card-monster {
+  color: #6B7280;
+}
+
+.map-card-lock-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 4px;
+  color: #6B7280;
+  filter: none;
+}
+
+.map-card-lock-hint {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+/* 关卡序号角标 */
+.map-card-level {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  background: linear-gradient(135deg, var(--map-c1), var(--map-c2));
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 8px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.map-card.locked .map-card-level {
+  background: linear-gradient(135deg, #9CA3AF, #6B7280);
+}
+
+@media (max-width: 600px) {
+  .map-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .map-card { padding: 18px 12px 14px; }
+  .map-card-icon { font-size: 44px; }
+  .map-card-name { font-size: 16px; }
+  .map-card-monster { font-size: 12px; }
 }

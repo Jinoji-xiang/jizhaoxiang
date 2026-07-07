@@ -88,12 +88,19 @@
             <a href="#" class="nav-link" data-page="practice">
                 <svg><use href="#i-zap"/></svg>开始练习
             </a>
+            <a href="#" class="nav-link" data-page="map">
+                <svg><use href="#i-trophy"/></svg>关卡地图
+            </a>
             <a href="#" class="nav-link" data-page="wrong">
                 <svg><use href="#i-notebook"/></svg>错题本
             </a>
             <a href="#" class="nav-link" data-page="report">
                 <svg><use href="#i-bar"/></svg>学习报告
             </a>
+            <button class="nav-trophy-btn" id="btn-open-achievements" title="成就" aria-label="成就">
+                <span class="trophy-emoji">🏆</span>
+                <span class="trophy-badge" id="achievement-badge" hidden>0</span>
+            </button>
             <button class="nav-login-btn" id="btn-open-login">
                 <svg><use href="#i-sparkle"/></svg>登录
             </button>
@@ -185,6 +192,20 @@
             </button>
         </section>
 
+        <!-- 关卡地图 (RPG 风格) -->
+        <section class="page" id="page-map">
+            <div class="page-header">
+                <h2 class="page-title"><svg><use href="#i-trophy"/></svg>关卡地图</h2>
+                <p class="page-sub">选择一块区域,开始你的冒险！</p>
+            </div>
+            <div class="map-grid" id="map-grid">
+                <div class="loading">加载中</div>
+            </div>
+            <button class="btn-back" data-page="home">
+                <svg width="14" height="14"><use href="#i-arrow-l"/></svg>返回首页
+            </button>
+        </section>
+
         <!-- 答题页 (Battle Mode) -->
         <section class="page" id="page-practice">
             <!-- 战斗 HUD -->
@@ -203,8 +224,30 @@
                 <div class="battle-hud-right">
                     <div class="battle-score-pill">⭐ <span id="battle-score">0</span></div>
                     <div class="battle-score-pill">第 <span id="q-current">1</span>/<span id="q-total">10</span> 题</div>
+                    <div class="gold-display" id="gold-display" title="金币">
+                        <span class="gold-icon">💰</span><span id="gold-num">0</span>
+                    </div>
                     <button class="btn-flee" id="btn-flee">撤退</button>
                 </div>
+            </div>
+
+            <!-- 技能槽 -->
+            <div class="skill-bar" id="skill-bar">
+                <button class="skill-btn" data-skill="hint" id="skill-hint" title="排除 1 个错误选项">
+                    <span class="skill-icon">💡</span>
+                    <span class="skill-name">提示</span>
+                    <span class="skill-count" id="skill-hint-count">1</span>
+                </button>
+                <button class="skill-btn" data-skill="heal" id="skill-heal" title="恢复 1 颗心 (整局只能用 1 次)">
+                    <span class="skill-icon">❤️‍🩹</span>
+                    <span class="skill-name">治疗</span>
+                    <span class="skill-count" id="skill-heal-count">1</span>
+                </button>
+                <button class="skill-btn" data-skill="charge" id="skill-charge" title="下 3 题伤害 ×2">
+                    <span class="skill-icon">⚡</span>
+                    <span class="skill-name">蓄力</span>
+                    <span class="skill-count" id="skill-charge-count">1</span>
+                </button>
             </div>
 
             <!-- 战斗场地 -->
@@ -217,9 +260,14 @@
                     <img id="player-sprite-img" alt="player" />
                 </div>
 
-                <!-- 史莱姆 (纯单 div + box-shadow 像素艺术) -->
-                <div class="monster-sprite idle" id="monster-sprite">
+                <!-- 怪兽 (纯 CSS 像素艺术：单 div + 多层背景/box-shadow + 细节子元素) -->
+                <div class="monster-sprite idle sprite-slime" id="monster-sprite">
                     <div class="slime-mouth"></div>
+                    <div class="m-detail d1"></div>
+                    <div class="m-detail d2"></div>
+                    <div class="m-detail d3"></div>
+                    <div class="m-detail d4"></div>
+                    <div class="m-halo"></div>
                 </div>
 
                 <!-- 怪兽血条（飘在怪兽头顶） -->
@@ -345,6 +393,25 @@
     </main>
 
     <div class="toast" id="toast"></div>
+
+    <!-- 成就弹窗 -->
+    <div class="modal-overlay achievement-overlay" id="achievement-modal" style="display:none">
+        <div class="modal-dialog achievement-dialog">
+            <button class="modal-close" id="achievement-close" aria-label="关闭">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <div class="modal-emoji">🏆</div>
+                <h2 class="modal-title">我的成就</h2>
+                <p class="modal-sub"><span id="ach-progress">0</span>/<span id="ach-total">5</span> 已解锁</p>
+            </div>
+            <div class="achievement-list" id="achievement-list">
+                <!-- 动态填充 -->
+            </div>
+        </div>
+    </div>
 
     <!-- 登录/注册 弹窗 -->
     <div class="modal-overlay" id="login-modal" style="display:none">
