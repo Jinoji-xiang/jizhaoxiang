@@ -1126,7 +1126,7 @@ function unlockNextLevel(knowledge) {
 }
 
 function loadMap() {
-    showPage('map');
+    // 不要 showPage('map') — showPage 已经会调用 loadMap,否则无限递归
     const grid = $('#map-grid');
     if (!grid) return;
 
