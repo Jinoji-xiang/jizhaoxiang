@@ -31,3 +31,11 @@ Thumbs.db
 .git-credentials
 token.txt
 *.token
+_git_cred*
+_credentials*
+_deploy_pages*.ps1
+_enable_pages*.ps1
+_old_deploy*
+启动.bat
+*.ps1
+!deploy.yml
