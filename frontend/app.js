@@ -456,11 +456,56 @@ async function loadKnowledgeList(grade) {
     });
 }
 
-// ========== 答题 ==========
+// ========== Battle 模式 ==========
+
+// 战斗状态常量
+const BATTLE = {
+    PLAYER_TURN: 'player_turn',     // 等待玩家选答案
+    PLAYER_HIT: 'player_hit',        // 玩家攻击动画
+    ENEMY_HIT: 'enemy_hit',          // 怪兽被击中
+    ENEMY_ATTACK: 'enemy_attack',    // 怪兽攻击动画
+    PLAYER_HURT: 'player_hurt',      // 玩家被击中
+    FINISHED: 'finished'             // 战斗结束
+};
+
+let battleState = BATTLE.PLAYER_TURN;
+let battleData = {
+    monsterMaxHp: 0,
+    monsterHp: 0,
+    hearts: 3,
+    maxHearts: 3,
+    score: 0,
+    combo: 0,
+    maxCombo: 0
+};
+
+const MONSTERS = [
+    { name: '史莱姆 Lv.1', color: 'green' },
+    { name: '幽灵 Lv.2', color: 'purple' },
+    { name: '机器人 Lv.3', color: 'orange' }
+];
+
+function pickMonster() {
+    return MONSTERS[0]; // P1: 先只用史莱姆
+}
+
 async function startPractice({ grade, knowledge = '', count = 10, source = 'normal' }) {
     const res = await apiRouter.getQuestions({ grade, knowledge, count });
     if (res.code !== 0) return toast(res.msg, 'error');
     if (!res.data.length) return toast('没有题目', 'error');
+
+    // 战斗数据
+    const monster = pickMonster();
+    battleData = {
+        monsterMaxHp: res.data.length * 10,
+        monsterHp: res.data.length * 10,
+        hearts: 3,
+        maxHearts: 3,
+        score: 0,
+        combo: 0,
+        maxCombo: 0
+    };
+    battleState = BATTLE.PLAYER_TURN;
 
     state.practice = {
         questions: res.data,
@@ -470,13 +515,114 @@ async function startPractice({ grade, knowledge = '', count = 10, source = 'norm
         answers: [],
         startedAt: Date.now(),
         questionStartTime: Date.now(),
-        source
+        source,
+        monster
     };
     showPage('practice');
     $('#question-card').style.display = 'block';
     $('#result-card').style.display = 'none';
+
+    // 初始化战斗 HUD
+    $('#monster-name-bar').textContent = monster.name;
+    updateMonsterHp();
+    updateHearts();
+    updateCombo();
+    updateScore();
+    $('#q-total').textContent = res.data.length;
+    $('#monster-sprite').classList.remove('dying', 'hurt');
+    $('#monster-sprite').classList.add('idle');
+    $('#player-sprite').classList.remove('attacking', 'charging', 'hurt');
+    $('#player-sprite').classList.add('idle');
+    $('#damage-numbers').innerHTML = '';
+
     renderQuestion();
     startTimer();
+}
+
+function updateMonsterHp() {
+    const pct = Math.max(0, battleData.monsterHp / battleData.monsterMaxHp * 100);
+    const fill = $('#monster-hp-fill');
+    if (fill) fill.style.width = pct + '%';
+    $('#monster-hp-text').textContent = `${battleData.monsterHp}/${battleData.monsterMaxHp}`;
+    // 血量低时变色
+    if (fill) {
+        if (pct < 25) fill.style.background = 'linear-gradient(180deg,#EF4444,#DC2626,#991B1B)';
+        else if (pct < 50) fill.style.background = 'linear-gradient(180deg,#FBBF24,#F59E0B,#D97706)';
+    }
+}
+
+function updateHearts() {
+    document.querySelectorAll('#hearts .heart').forEach((h, i) => {
+        if (i < battleData.hearts) h.classList.remove('lost');
+        else h.classList.add('lost');
+    });
+}
+
+function updateCombo() {
+    const c = $('#combo');
+    if (battleData.combo >= 2) {
+        c.style.display = 'inline-flex';
+        $('#combo-num').textContent = '🔥 ×' + battleData.combo;
+    } else {
+        c.style.display = 'none';
+    }
+}
+
+function updateScore() {
+    $('#battle-score').textContent = battleData.score;
+}
+
+function showDamage(text, type = 'hp-loss', x = 0.5, y = 0.5) {
+    const wrap = $('#damage-numbers');
+    if (!wrap) return;
+    const el = document.createElement('div');
+    el.className = 'damage-text ' + type;
+    el.textContent = text;
+    el.style.left = (x * 100) + '%';
+    el.style.top = (y * 100) + '%';
+    el.style.transform = 'translateX(-50%)';
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+}
+
+function showSlash(isCrit) {
+    const stage = $('#battle-stage');
+    const s = document.createElement('div');
+    s.className = 'attack-slash' + (isCrit ? ' crit' : '');
+    stage.appendChild(s);
+    setTimeout(() => s.remove(), 400);
+}
+
+function shake(stageId = 'battle-stage') {
+    const stage = $('#' + stageId);
+    if (!stage) return;
+    stage.classList.add('shake');
+    setTimeout(() => stage.classList.remove('shake'), 400);
+}
+
+function flashHit() {
+    const stage = $('#battle-stage');
+    if (!stage) return;
+    stage.classList.add('hit-flash');
+    setTimeout(() => stage.classList.remove('hit-flash'), 300);
+}
+
+function showVictoryStars() {
+    const stage = $('#battle-stage');
+    const wrap = document.createElement('div');
+    wrap.className = 'victory-stars';
+    const colors = ['⭐', '🌟', '✨', '💫'];
+    for (let i = 0; i < 20; i++) {
+        const s = document.createElement('div');
+        s.className = 'victory-star';
+        s.textContent = colors[Math.floor(Math.random() * colors.length)];
+        s.style.left = Math.random() * 90 + 5 + '%';
+        s.style.animationDelay = (Math.random() * 0.8) + 's';
+        s.style.animationDuration = (1.5 + Math.random() * 1) + 's';
+        wrap.appendChild(s);
+    }
+    stage.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 3000);
 }
 
 let _quizTimer = null;
@@ -484,7 +630,8 @@ function startTimer() {
     clearInterval(_quizTimer);
     _quizTimer = setInterval(() => {
         const elapsed = Math.floor((Date.now() - state.practice.startedAt) / 1000);
-        $('#timer').textContent = '⏱ ' + fmtTime(elapsed);
+        const t = $('#timer');
+        if (t) t.textContent = '⏱ ' + fmtTime(elapsed);
     }, 1000);
 }
 
@@ -507,6 +654,10 @@ function renderQuestion() {
     $('#feedback').style.display = 'none';
     $('#btn-submit').style.display = 'flex';
     $('#btn-next').style.display = 'none';
+
+    // 解锁答题区
+    const bq = $('#question-card');
+    if (bq) bq.classList.remove('locked');
 
     const optionsArea = $('#options-area');
     const fillArea = $('#fill-area');
@@ -537,17 +688,29 @@ function renderQuestion() {
 }
 
 $('#btn-submit').addEventListener('click', async () => {
+    // 锁住战斗状态
+    if (battleState !== BATTLE.PLAYER_TURN) return;
+    battleState = BATTLE.PLAYER_HIT;
+
     const p = state.practice;
     const q = p.questions[p.currentIndex];
     let userAnswer = '';
 
     if (q.question_type === 'choice' && q.options) {
         const selected = document.querySelector('.option-btn.selected');
-        if (!selected) return toast('请先选择一个答案', 'error');
+        if (!selected) { battleState = BATTLE.PLAYER_TURN; return toast('请先选择一个答案', 'error'); }
         userAnswer = selected.dataset.value;
     } else {
         userAnswer = $('#fill-input').value.trim();
-        if (!userAnswer) return toast('请输入答案', 'error');
+        if (!userAnswer) { battleState = BATTLE.PLAYER_TURN; return toast('请输入答案', 'error'); }
+    }
+
+    // 锁定答题区
+    const bq = $('#question-card');
+    if (bq) bq.classList.add('locked');
+    $('#btn-submit').style.display = 'none';
+    if (q.question_type === 'choice') {
+        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
     }
 
     const timeSpent = Math.floor((Date.now() - p.questionStartTime) / 1000);
@@ -557,36 +720,128 @@ $('#btn-submit').addEventListener('click', async () => {
         time_spent: timeSpent
     });
 
-    if (res.code === 0) {
-        const result = res.data;
-        p.answers.push({ question: q, userAnswer, isCorrect: result.is_correct });
-        if (result.is_correct) p.rightCount++;
-        else p.wrongCount++;
+    if (res.code !== 0) {
+        battleState = BATTLE.PLAYER_TURN;
+        if (bq) bq.classList.remove('locked');
+        $('#btn-submit').style.display = 'flex';
+        return toast(res.msg, 'error');
+    }
 
-        $('#feedback').style.display = 'block';
-        if (result.is_correct) {
-            $('#feedback').className = 'feedback correct';
-            $('#feedback').innerHTML = '🎉 答对啦! 答案: <b>' + result.correct_answer + '</b><br>' + (result.explanation || '');
-        } else {
-            $('#feedback').className = 'feedback wrong';
-            $('#feedback').innerHTML = '😅 答错了！正确答案: <b>' + result.correct_answer + '</b><br>' + (result.explanation || '');
-        }
+    const result = res.data;
+    p.answers.push({ question: q, userAnswer, isCorrect: result.is_correct });
 
-        if (q.question_type === 'choice') {
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(b => {
-                b.disabled = true;
-                if (b.dataset.value === q.answer) b.classList.add('correct');
-                if (b.classList.contains('selected') && !result.is_correct) b.classList.add('wrong');
-            });
-        }
+    // 显示选项正误
+    if (q.question_type === 'choice') {
+        document.querySelectorAll('.option-btn').forEach(b => {
+            if (b.dataset.value === q.answer) b.classList.add('correct');
+            if (b.classList.contains('selected') && !result.is_correct) b.classList.add('wrong');
+        });
+    }
 
-        $('#btn-submit').style.display = 'none';
-        $('#btn-next').style.display = 'block';
-        $('#btn-next').textContent = p.currentIndex === p.questions.length - 1 ? '看结果 🎉' : '下一题 →';
-        $('#btn-next').focus();
+    if (result.is_correct) {
+        // === 玩家攻击 ===
+        p.rightCount++;
+        battleData.combo++;
+        if (battleData.combo > battleData.maxCombo) battleData.maxCombo = battleData.combo;
+
+        const isCrit = battleData.combo >= 3;
+        const dmg = isCrit ? 20 : 10;
+        battleData.monsterHp = Math.max(0, battleData.monsterHp - dmg);
+        battleData.score += isCrit ? 30 : 10;
+
+        // 1. 玩家蓄力 → 攻击
+        const ps = $('#player-sprite');
+        ps.classList.remove('idle');
+        ps.classList.add('charging');
+        setTimeout(() => {
+            ps.classList.remove('charging');
+            ps.classList.add('attacking');
+        }, 250);
+
+        // 2. 命中特效
+        setTimeout(() => {
+            showSlash(isCrit);
+            flashHit();
+            const ms = $('#monster-sprite');
+            ms.classList.remove('idle');
+            ms.classList.add('hurt');
+            showDamage('-' + dmg, isCrit ? 'critical' : 'hp-loss', 0.78, 0.45);
+            if (isCrit) showDamage('CRITICAL!', 'crit-text', 0.78, 0.20);
+            updateMonsterHp();
+            updateScore();
+            updateCombo();
+        }, 500);
+
+        // 3. 怪兽恢复
+        setTimeout(() => {
+            const ms = $('#monster-sprite');
+            ms.classList.remove('hurt');
+            ms.classList.add('idle');
+        }, 900);
+
+        // 4. 检查胜负
+        setTimeout(() => {
+            if (battleData.monsterHp <= 0) {
+                battleState = BATTLE.FINISHED;
+                showBattleEnd(true);
+            } else {
+                $('#btn-next').style.display = 'flex';
+                battleState = BATTLE.PLAYER_TURN;
+            }
+        }, 1200);
+
     } else {
-        toast(res.msg, 'error');
+        // === 怪兽反击 ===
+        p.wrongCount++;
+        battleData.hearts = Math.max(0, battleData.hearts - 1);
+        battleData.combo = 0;
+
+        // 1. 怪兽蓄力
+        const ms = $('#monster-sprite');
+        ms.classList.remove('idle');
+        ms.classList.add('attacking');
+
+        // 2. 攻击命中
+        setTimeout(() => {
+            shake();
+            flashHit();
+            const ps = $('#player-sprite');
+            ps.classList.remove('attacking', 'charging', 'idle');
+            ps.classList.add('hurt');
+            showDamage('-1 ❤️', 'heart-loss', 0.20, 0.40);
+            updateHearts();
+            updateCombo();
+        }, 400);
+
+        // 3. 玩家恢复
+        setTimeout(() => {
+            const ps = $('#player-sprite');
+            ps.classList.remove('hurt');
+            ps.classList.add('idle');
+        }, 800);
+
+        // 4. 检查胜负
+        setTimeout(() => {
+            const ms = $('#monster-sprite');
+            ms.classList.remove('attacking');
+            ms.classList.add('idle');
+            if (battleData.hearts <= 0) {
+                battleState = BATTLE.FINISHED;
+                showBattleEnd(false);
+            } else {
+                $('#btn-next').style.display = 'flex';
+                battleState = BATTLE.PLAYER_TURN;
+            }
+        }, 1100);
+    }
+
+    $('#feedback').style.display = 'block';
+    if (result.is_correct) {
+        $('#feedback').className = 'feedback correct';
+        $('#feedback').innerHTML = '<div class="feedback-title">💥 击中！</div><div class="feedback-explain">' + (result.explanation || '') + '</div>';
+    } else {
+        $('#feedback').className = 'feedback wrong';
+        $('#feedback').innerHTML = '<div class="feedback-title">💔 被攻击！</div><div class="feedback-explain">正确答案: <b>' + result.correct_answer + '</b>' + (result.explanation ? ' · ' + result.explanation : '') + '</div>';
     }
 });
 
@@ -596,31 +851,48 @@ $('#btn-next').addEventListener('click', () => {
         p.currentIndex++;
         renderQuestion();
     } else {
-        showResult();
+        // 题目打完但怪兽还没死(理论不会发生,但兜底)
+        showBattleEnd(true);
     }
 });
 
-function showResult() {
+function showBattleEnd(isWin) {
     clearInterval(_quizTimer);
     const p = state.practice;
-    const total = p.questions.length;
-    const accuracy = total > 0 ? Math.round(p.rightCount / total * 100) : 0;
 
-    $('#question-card').style.display = 'none';
-    $('#result-card').style.display = 'block';
+    if (isWin) {
+        // 怪兽死亡动画
+        const ms = $('#monster-sprite');
+        ms.classList.remove('idle', 'hurt', 'attacking');
+        ms.classList.add('dying');
+        showVictoryStars();
+    }
 
-    $('#r-right').textContent = p.rightCount;
-    $('#r-wrong').textContent = p.wrongCount;
-    $('#r-accuracy').textContent = accuracy + '%';
+    setTimeout(() => {
+        $('#question-card').style.display = 'none';
+        $('#result-card').style.display = 'block';
 
-    let emoji, comment;
-    if (accuracy === 100) { emoji = '🏆'; comment = '满分！你太厉害啦！'; }
-    else if (accuracy >= 80) { emoji = '🌟'; comment = '真棒！继续保持！'; }
-    else if (accuracy >= 60) { emoji = '👍'; comment = '不错哦，再加把劲！'; }
-    else if (accuracy >= 40) { emoji = '💪'; comment = '别灰心，多练习就好！'; }
-    else { emoji = '🌱'; comment = '加油！熟能生巧！'; }
-    $('#r-emoji').textContent = emoji;
-    $('#r-comment').textContent = comment;
+        const accuracy = p.questions.length > 0 ? Math.round(p.rightCount / p.questions.length * 100) : 0;
+        $('#r-right').textContent = p.rightCount;
+        $('#r-wrong').textContent = p.wrongCount;
+        $('#r-accuracy').textContent = accuracy + '%';
+
+        let emoji, title, comment;
+        if (isWin) {
+            if (battleData.hearts === 3 && p.rightCount === p.questions.length) {
+                emoji = '🏆'; title = '完美胜利！'; comment = '零失误击败怪兽！你是数学小英雄！';
+            } else if (battleData.hearts >= 2) {
+                emoji = '🌟'; title = '战斗胜利！'; comment = '成功击败了' + (p.monster ? p.monster.name : '怪兽') + '！';
+            } else {
+                emoji = '💪'; title = '惊险胜利！'; comment = '虽然受了不少伤，但你还是赢了！';
+            }
+        } else {
+            emoji = '💀'; title = '战斗失败…'; comment = '再接再厉，下次一定能赢！';
+        }
+        $('#r-emoji').textContent = emoji;
+        $('#r-title').textContent = title;
+        $('#r-comment').textContent = comment;
+    }, isWin ? 1000 : 200);
 
     checkLogin();
 }
@@ -633,6 +905,15 @@ $('#btn-again').addEventListener('click', () => {
         startWrongPractice();
     } else {
         startPractice({ grade, count: 10 });
+    }
+});
+
+// 撤退按钮
+$(document).on('click', '#btn-flee', () => {
+    if (confirm('确定要撤退吗？当前战斗进度会丢失。')) {
+        battleState = BATTLE.FINISHED;
+        clearInterval(_quizTimer);
+        showPage('home');
     }
 });
 
