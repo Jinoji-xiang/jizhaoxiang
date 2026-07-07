@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学数学题库 - 1~2年级</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="logo">🧮</span>
+            <span class="title">小学数学题库</span>
+        </div>
+        <div class="nav-right" id="nav-right">
+            <a href="#" class="nav-link active" data-page="home">首页</a>
+            <a href="#" class="nav-link" data-page="practice">开始练习</a>
+            <a href="#" class="nav-link" data-page="wrong">错题本</a>
+            <a href="#" class="nav-link" data-page="report">学习报告</a>
+        </div>
+    </nav>
+
+    <!-- 主页 -->
+    <main id="app">
+        <!-- 首页 -->
+        <section class="page active" id="page-home">
+            <div class="hero">
+                <h1>🎉 欢迎来到小学数学乐园</h1>
+                <p class="subtitle">专为 1~2 年级小朋友设计的趣味数学练习</p>
+
+                <div class="login-card" id="login-card">
+                    <h2 id="login-title">登录开始学习</h2>
+                    <div class="form-tabs">
+                        <span class="tab active" data-tab="login">登录</span>
+                        <span class="tab" data-tab="register">注册</span>
+                    </div>
+                    <input type="text" id="username" placeholder="用户名(2位以上)" />
+                    <input type="password" id="password" placeholder="密码(4位以上)" />
+                    <div id="grade-select-wrap" style="display:none">
+                        <label>选择年级:</label>
+                        <select id="reg-grade">
+                            <option value="1">一年级</option>
+                            <option value="2">二年级</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="auth-btn">登录</button>
+                    <p class="tip">新用户请点击上方"注册"标签</p>
+                </div>
+
+                <div class="user-info-card" id="user-info-card" style="display:none">
+                    <div class="avatar-big" id="user-avatar">🐱</div>
+                    <h2>你好,<span id="user-name">小朋友</span>!</h2>
+                    <p>当前年级:<span id="user-grade">一年级</span></p>
+                    <div class="stat-row">
+                        <div class="stat">
+                            <div class="stat-num" id="stat-total">0</div>
+                            <div class="stat-label">答题数</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-num" id="stat-correct">0</div>
+                            <div class="stat-label">答对数</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-num" id="stat-accuracy">0%</div>
+                            <div class="stat-label">正确率</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-btn" data-action="quick-practice">
+                        <span class="emoji">⚡</span>
+                        <span class="text">快速练习</span>
+                        <span class="sub">10道随机题</span>
+                    </button>
+                    <button class="action-btn" data-action="by-knowledge">
+                        <span class="emoji">📚</span>
+                        <span class="text">按知识点</span>
+                        <span class="sub">专项训练</span>
+                    </button>
+                    <button class="action-btn" data-action="wrong-practice">
+                        <span class="emoji">📒</span>
+                        <span class="text">错题重做</span>
+                        <span class="sub">巩固薄弱点</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 选择知识点 -->
+        <section class="page" id="page-knowledge">
+            <h2>选择知识点</h2>
+            <div class="grade-switch">
+                <button class="grade-btn active" data-grade="1">一年级</button>
+                <button class="grade-btn" data-grade="2">二年级</button>
+            </div>
+            <div class="knowledge-list" id="knowledge-list">
+                <div class="loading">加载中...</div>
+            </div>
+            <button class="btn-back" data-page="home">← 返回首页</button>
+        </section>
+
+        <!-- 答题页 -->
+        <section class="page" id="page-practice">
+            <div class="practice-header">
+                <div class="progress">
+                    <span id="q-current">1</span> / <span id="q-total">10</span>
+                </div>
+                <div class="score-board">
+                    <span class="score-item">✅ <span id="right-count">0</span></span>
+                    <span class="score-item">❌ <span id="wrong-count">0</span></span>
+                </div>
+                <div class="timer" id="timer">⏱ 00:00</div>
+            </div>
+
+            <div class="question-card" id="question-card">
+                <div class="question-type" id="q-type">选择题</div>
+                <div class="question-content" id="q-content">
+                    加载题目中...
+                </div>
+                <div class="options-area" id="options-area"></div>
+                <div class="fill-area" id="fill-area" style="display:none">
+                    <input type="text" id="fill-input" placeholder="? 输入答案" />
+                </div>
+
+                <div class="feedback" id="feedback" style="display:none"></div>
+
+                <div class="action-row">
+                    <button class="btn-secondary" id="btn-submit">提交</button>
+                    <button class="btn-primary" id="btn-next" style="display:none">下一题 →</button>
+                </div>
+            </div>
+
+            <div class="result-card" id="result-card" style="display:none">
+                <h2>🎊 练习完成!</h2>
+                <div class="result-stats">
+                    <div class="big-stat">
+                        <div class="num-big" id="r-right">0</div>
+                        <div class="label">答对</div>
+                    </div>
+                    <div class="big-stat">
+                        <div class="num-big" id="r-wrong">0</div>
+                        <div class="label">答错</div>
+                    </div>
+                    <div class="big-stat">
+                        <div class="num-big" id="r-accuracy">0%</div>
+                        <div class="label">正确率</div>
+                    </div>
+                </div>
+                <div class="result-emoji" id="r-emoji">🌟</div>
+                <p class="result-comment" id="r-comment">继续加油哦!</p>
+                <div class="action-row">
+                    <button class="btn-primary" id="btn-again">再来一组</button>
+                    <button class="btn-secondary" data-page="wrong">查看错题 →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 错题本 -->
+        <section class="page" id="page-wrong">
+            <h2>📒 我的错题本</h2>
+            <div class="wrong-summary" id="wrong-summary"></div>
+            <div class="wrong-list" id="wrong-list">
+                <div class="loading">加载中...</div>
+            </div>
+            <button class="btn-back" data-page="home">← 返回首页</button>
+        </section>
+
+        <!-- 学习报告 -->
+        <section class="page" id="page-report">
+            <h2>📊 我的学习报告</h2>
+            <div class="report-summary" id="report-summary">
+                <div class="loading">加载中...</div>
+            </div>
+            <h3>知识点掌握情况</h3>
+            <div class="knowledge-chart" id="knowledge-chart"></div>
+            <button class="btn-back" data-page="home">← 返回首页</button>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="data/questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

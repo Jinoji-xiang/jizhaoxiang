@@ -1,0 +1,220 @@
+"""
+种子题库数据 - 小学1~2年级数学题
+每个题目的字段: grade, knowledge, question_type, content, options, answer, explanation, difficulty
+"""
+import json
+
+def opts(*args):
+    """快捷生成选项 JSON"""
+    return json.dumps(list(args), ensure_ascii=False)
+
+# ============== 一年级 ==============
+
+GRADE_1 = [
+    # 10以内加法
+    {'grade': 1, 'knowledge': '10以内加法', 'question_type': 'choice',
+     'content': '小明有3个苹果，妈妈又给了他2个，小明现在有几个苹果？',
+     'options': opts('4', '5', '6', '7'),
+     'answer': '5', 'explanation': '3 + 2 = 5,把两个数合起来用加法。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内加法', 'question_type': 'fill',
+     'content': '4 + 3 = ?',
+     'options': None, 'answer': '7', 'explanation': '4 加 3 等于 7。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内加法', 'question_type': 'fill',
+     'content': '5 + 4 = ?',
+     'options': None, 'answer': '9', 'explanation': '5 加 4 等于 9。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内加法', 'question_type': 'fill',
+     'content': '6 + 2 = ?',
+     'options': None, 'answer': '8', 'explanation': '6 加 2 等于 8。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内加法', 'question_type': 'choice',
+     'content': '树上有5只小鸟，又飞来了3只，树上现在有（）只小鸟。',
+     'options': opts('7', '8', '9', '10'),
+     'answer': '8', 'explanation': '5 + 3 = 8', 'difficulty': 1},
+
+    # 10以内减法
+    {'grade': 1, 'knowledge': '10以内减法', 'question_type': 'choice',
+     'content': '小红有7颗糖,送给小明3颗,小红还剩几颗糖?',
+     'options': opts('3', '4', '5', '6'),
+     'answer': '4', 'explanation': '7 - 3 = 4，从一个数里去掉一部分用减法。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内减法', 'question_type': 'fill',
+     'content': '9 - 5 = ?',
+     'options': None, 'answer': '4', 'explanation': '9 减 5 等于 4。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内减法', 'question_type': 'fill',
+     'content': '8 - 3 = ?',
+     'options': None, 'answer': '5', 'explanation': '8 减 3 等于 5。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '10以内减法', 'question_type': 'fill',
+     'content': '10 - 6 = ?',
+     'options': None, 'answer': '4', 'explanation': '10 减 6 等于 4。', 'difficulty': 1},
+
+    # 20以内加法
+    {'grade': 1, 'knowledge': '20以内加法', 'question_type': 'fill',
+     'content': '12 + 5 = ?',
+     'options': None, 'answer': '17', 'explanation': '12 + 5 = 17。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '20以内加法', 'question_type': 'fill',
+     'content': '14 + 3 = ?',
+     'options': None, 'answer': '17', 'explanation': '14 + 3 = 17。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '20以内加法', 'question_type': 'fill',
+     'content': '11 + 8 = ?',
+     'options': None, 'answer': '19', 'explanation': '11 + 8 = 19。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '20以内加法', 'question_type': 'choice',
+     'content': '小华有13本书,爸爸又给他买了5本,小华现在有几本?',
+     'options': opts('17', '18', '19', '20'),
+     'answer': '18', 'explanation': '13 + 5 = 18', 'difficulty': 2},
+
+    # 20以内减法
+    {'grade': 1, 'knowledge': '20以内减法', 'question_type': 'fill',
+     'content': '15 - 7 = ?',
+     'options': None, 'answer': '8', 'explanation': '15 - 7 = 8。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '20以内减法', 'question_type': 'fill',
+     'content': '18 - 9 = ?',
+     'options': None, 'answer': '9', 'explanation': '18 - 9 = 9。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '20以内减法', 'question_type': 'fill',
+     'content': '16 - 8 = ?',
+     'options': None, 'answer': '8', 'explanation': '16 - 8 = 8。', 'difficulty': 2},
+
+    # 比大小
+    {'grade': 1, 'knowledge': '比大小', 'question_type': 'choice',
+     'content': '比较大小: 7 ○ 5 (填 >、< 或 =)',
+     'options': opts('>', '<', '='),
+     'answer': '>', 'explanation': '7 比 5 大,所以填 >。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '比大小', 'question_type': 'choice',
+     'content': '比较大小: 3 ○ 8 (填 >、< 或 =)',
+     'options': opts('>', '<', '='),
+     'answer': '<', 'explanation': '3 比 8 小,所以填 <。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '比大小', 'question_type': 'fill',
+     'content': '在 ○ 里填上 >、< 或 = : 4 ○ 4',
+     'options': None, 'answer': '=', 'explanation': '两个数相等,填 =。', 'difficulty': 1},
+
+    # 认识图形
+    {'grade': 1, 'knowledge': '认识图形', 'question_type': 'choice',
+     'content': '下面哪个图形是圆形?',
+     'options': opts('口', '○', '△', '□'),
+     'answer': '○', 'explanation': '圆形是圆滚滚的。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '认识图形', 'question_type': 'choice',
+     'content': '下面哪个图形是三角形?',
+     'options': opts('○', '□', '△', '☆'),
+     'answer': '△', 'explanation': '三角形有三条边。', 'difficulty': 1},
+    {'grade': 1, 'knowledge': '认识图形', 'question_type': 'choice',
+     'content': '正方形有几条边?',
+     'options': opts('3条', '4条', '5条', '6条'),
+     'answer': '4条', 'explanation': '正方形有 4 条相等的边。', 'difficulty': 1},
+
+    # 找规律
+    {'grade': 1, 'knowledge': '找规律', 'question_type': 'fill',
+     'content': '找规律填数: 1, 3, 5, 7, ( ), 11',
+     'options': None, 'answer': '9', 'explanation': '相邻两数相差 2,8 + 1 应该是 9。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '找规律', 'question_type': 'fill',
+     'content': '找规律填数: 2, 4, 6, 8, ( ), 12',
+     'options': None, 'answer': '10', 'explanation': '相邻两数相差 2,8 后是 10。', 'difficulty': 1},
+
+    # 应用题
+    {'grade': 1, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '小明今年5岁,姐姐比小明大3岁,姐姐今年几岁?',
+     'options': opts('7岁', '8岁', '9岁', '10岁'),
+     'answer': '8岁', 'explanation': '5 + 3 = 8(岁)。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '停车场原来有12辆车,开走了5辆,还剩几辆?',
+     'options': opts('5辆', '6辆', '7辆', '8辆'),
+     'answer': '7辆', 'explanation': '12 - 5 = 7(辆)。', 'difficulty': 2},
+    {'grade': 1, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '妈妈买了8个鸡蛋,吃了3个,还剩几个?',
+     'options': opts('4个', '5个', '6个', '7个'),
+     'answer': '5个', 'explanation': '8 - 3 = 5(个)。', 'difficulty': 2},
+]
+
+# ============== 二年级 ==============
+
+GRADE_2 = [
+    # 100以内加减法
+    {'grade': 2, 'knowledge': '100以内加法', 'question_type': 'fill',
+     'content': '45 + 23 = ?',
+     'options': None, 'answer': '68', 'explanation': '45 + 23 = 68。', 'difficulty': 1},
+    {'grade': 2, 'knowledge': '100以内加法', 'question_type': 'fill',
+     'content': '37 + 48 = ?',
+     'options': None, 'answer': '85', 'explanation': '37 + 48 = 85。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '100以内加法', 'question_type': 'fill',
+     'content': '56 + 27 = ?',
+     'options': None, 'answer': '83', 'explanation': '56 + 27 = 83。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '100以内加法', 'question_type': 'choice',
+     'content': '二年级一班有45人,二班有38人,两个班一共有多少人?',
+     'options': opts('73人', '83人', '93人', '103人'),
+     'answer': '83人', 'explanation': '45 + 38 = 83(人)。', 'difficulty': 2},
+
+    {'grade': 2, 'knowledge': '100以内减法', 'question_type': 'fill',
+     'content': '78 - 35 = ?',
+     'options': None, 'answer': '43', 'explanation': '78 - 35 = 43。', 'difficulty': 1},
+    {'grade': 2, 'knowledge': '100以内减法', 'question_type': 'fill',
+     'content': '92 - 47 = ?',
+     'options': None, 'answer': '45', 'explanation': '92 - 47 = 45。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '100以内减法', 'question_type': 'fill',
+     'content': '85 - 39 = ?',
+     'options': None, 'answer': '46', 'explanation': '85 - 39 = 46。', 'difficulty': 2},
+
+    # 乘法初步
+    {'grade': 2, 'knowledge': '乘法初步', 'question_type': 'fill',
+     'content': '3 × 4 = ?',
+     'options': None, 'answer': '12', 'explanation': '3 乘 4 等于 12,表示 4 个 3 相加。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '乘法初步', 'question_type': 'fill',
+     'content': '5 × 6 = ?',
+     'options': None, 'answer': '30', 'explanation': '5 乘 6 等于 30。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '乘法初步', 'question_type': 'fill',
+     'content': '7 × 8 = ?',
+     'options': None, 'answer': '56', 'explanation': '7 乘 8 等于 56。', 'difficulty': 3},
+    {'grade': 2, 'knowledge': '乘法初步', 'question_type': 'choice',
+     'content': '每个书包有5本书,4个书包一共有几本书?',
+     'options': opts('15本', '20本', '25本', '30本'),
+     'answer': '20本', 'explanation': '5 × 4 = 20(本)。', 'difficulty': 2},
+
+    # 除法初步
+    {'grade': 2, 'knowledge': '除法初步', 'question_type': 'fill',
+     'content': '12 ÷ 4 = ?',
+     'options': None, 'answer': '3', 'explanation': '12 除以 4 等于 3,表示把 12 平均分成 4 份。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '除法初步', 'question_type': 'fill',
+     'content': '24 ÷ 6 = ?',
+     'options': None, 'answer': '4', 'explanation': '24 除以 6 等于 4。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '除法初步', 'question_type': 'fill',
+     'content': '36 ÷ 9 = ?',
+     'options': None, 'answer': '4', 'explanation': '36 除以 9 等于 4。', 'difficulty': 3},
+
+    # 乘法口诀
+    {'grade': 2, 'knowledge': '乘法口诀', 'question_type': 'choice',
+     'content': '下面的口诀中,只能写出一道乘法算式的是?',
+     'options': opts('三三得九', '二四得八', '四五二十', '六七四十二'),
+     'answer': '三三得九', 'explanation': '三三得九只能写出 3×9=9,其他都能写出两道。', 'difficulty': 3},
+
+    # 时间认识
+    {'grade': 2, 'knowledge': '时间认识', 'question_type': 'choice',
+     'content': '时针指向3,分针指向12,这是几时?',
+     'options': opts('3时', '12时', '15时', '9时'),
+     'answer': '3时', 'explanation': '分针指向12时,时针指的数字就是几时。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '时间认识', 'question_type': 'fill',
+     'content': '1小时 = ? 分钟',
+     'options': None, 'answer': '60', 'explanation': '1 小时等于 60 分钟。', 'difficulty': 1},
+
+    # 找规律
+    {'grade': 2, 'knowledge': '找规律', 'question_type': 'fill',
+     'content': '找规律填数: 2, 4, 8, 14, 22, ( )',
+     'options': None, 'answer': '32', 'explanation': '相邻两数的差分别是 2,4,6,8,10,下一个差是 12,22 + 10 = 32。', 'difficulty': 3},
+    {'grade': 2, 'knowledge': '找规律', 'question_type': 'fill',
+     'content': '找规律填数: 1, 4, 9, 16, 25, ( )',
+     'options': None, 'answer': '36', 'explanation': '1×1, 2×2, 3×3, 4×4, 5×5, 下个是 6×6 = 36。', 'difficulty': 3},
+
+    # 应用题
+    {'grade': 2, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '小红有30元钱,买文具用去18元,还剩多少钱?',
+     'options': opts('10元', '12元', '14元', '16元'),
+     'answer': '12元', 'explanation': '30 - 18 = 12(元)。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '每支铅笔3角钱,买5支铅笔需要多少钱?',
+     'options': opts('10角', '15角', '20角', '25角'),
+     'answer': '15角', 'explanation': '3 × 5 = 15(角)。', 'difficulty': 2},
+    {'grade': 2, 'knowledge': '应用题', 'question_type': 'choice',
+     'content': '将20个苹果平均分给5个小朋友,每人分几个?',
+     'options': opts('3个', '4个', '5个', '6个'),
+     'answer': '4个', 'explanation': '20 ÷ 5 = 4(个)。', 'difficulty': 2},
+]
+
+SEED_QUESTIONS = GRADE_1 + GRADE_2
+
+if __name__ == '__main__':
+    print(f'共 {len(SEED_QUESTIONS)} 道题')
+    print(f'一年级 {len(GRADE_1)} 道,二年级 {len(GRADE_2)} 道')
