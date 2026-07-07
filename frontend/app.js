@@ -391,8 +391,9 @@ function useSkill(skillId) {
 function checkAchievementsOnCorrect(dmg, isCrit) {
     const uid = getCurrentUid();
     if (!uid) return;
-    // 🩸 一击必杀: 单次伤害 >= 100
-    if (dmg >= 100) {
+    // 🩸 一击必杀: 单次暴击伤害足够大 (单发 >= 40 = 蓄力暴击) 或 一击杀掉 100+ HP 的怪兽
+    const killsBigMonster = isCrit && battleData.monsterMaxHp >= 100 && battleData.monsterHp <= 0;
+    if (dmg >= 100 || (isCrit && dmg >= 40) || killsBigMonster) {
         AchievementManager.unlock(uid, 'one_shot');
     }
     // 🔥 连击大师: 单次连击 >= 10
@@ -1461,16 +1462,14 @@ $('#btn-submit').addEventListener('click', async () => {
         battleData.combo++;
         if (battleData.combo > battleData.maxCombo) battleData.maxCombo = battleData.combo;
 
-        const isCrit = battleData.combo >= 3;
+const isCrit = battleData.combo >= 3;
         let dmg = isCrit ? 20 : 10;
         // 蓄力技能: dmg ×2, 持续 3 题
         if (SkillManager.battle.charge_remaining > 0) {
             dmg = dmg * 2;
             SkillManager.battle.charge_remaining--;
-            // 蓄力用完后再渲染(防止 UI 提前变灰)
-            if (SkillManager.battle.charge_remaining === 0) {
-                setTimeout(() => SkillManager.render(), 50);
-            }
+            // 实时刷新蓄力计数 UI (×3 → ×2 → ×1 → 1)
+            SkillManager.render();
         }
         battleData.monsterHp = Math.max(0, battleData.monsterHp - dmg);
         battleData.score += isCrit ? 30 : 10;
