@@ -1380,7 +1380,7 @@ input:focus, select:focus {
 
 /* ---------- 史莱姆 Slime（绿）：椭圆身体 ---------- */
 .sprite-slime {
-  background: linear-gradient(180deg, #4ADE80 0%, #22C55E 70%, #16A34A 100%);
+  background: radial-gradient(circle at 38% 30%, #86EFAC 0%, #4ADE80 40%, #22C55E 72%, #16A34A 100%);
   border-radius: 50% 50% 45% 45% / 60% 60% 35% 35%;
   box-shadow:
     inset -8px -4px 0 rgba(0, 0, 0, 0.15),
@@ -1404,7 +1404,7 @@ input:focus, select:focus {
 
 /* ---------- 幽灵 Ghost（紫）：飘浮 + 波浪裙摆 ---------- */
 .sprite-ghost {
-  background: linear-gradient(180deg, #C084FC 0%, #9333EA 65%, #7E22CE 100%);
+  background: radial-gradient(circle at 40% 28%, #E9D5FF 0%, #C084FC 38%, #9333EA 70%, #7E22CE 100%);
   border-radius: 50% 50% 18% 18% / 62% 62% 22% 22%;
   box-shadow:
     inset -8px -4px 0 rgba(0, 0, 0, 0.18),
@@ -1461,7 +1461,7 @@ input:focus, select:focus {
 
 /* ---------- 小龙 Wyvern（红）：龙头 + 双翼 + 犄角 ---------- */
 .sprite-wyvern {
-  background: linear-gradient(180deg, #F87171 0%, #EF4444 60%, #B91C1C 100%);
+  background: radial-gradient(circle at 40% 30%, #FCA5A5 0%, #F87171 40%, #EF4444 70%, #B91C1C 100%);
   border-radius: 45% 45% 40% 40% / 55% 55% 45% 45%;
   box-shadow:
     inset -8px -5px 0 rgba(0, 0, 0, 0.22),
@@ -1496,7 +1496,7 @@ input:focus, select:focus {
 
 /* ---------- 木乃伊 Mummy（黄）：绷带条纹 + 独眼 ---------- */
 .sprite-mummy {
-  background: linear-gradient(180deg, #FEF08A 0%, #FDE047 55%, #CA8A04 100%);
+  background: radial-gradient(circle at 42% 32%, #FEF9C3 0%, #FEF08A 40%, #FDE047 70%, #CA8A04 100%);
   border-radius: 45% 45% 35% 35% / 55% 55% 40% 40%;
   box-shadow:
     inset -7px -4px 0 rgba(0, 0, 0, 0.18),
@@ -1520,7 +1520,7 @@ input:focus, select:focus {
 
 /* ---------- 骷髅王 Skeleton（黑+白）：骷髅头 + 金冠 ---------- */
 .sprite-skeleton {
-  background: linear-gradient(180deg, #F9FAFB 0%, #E5E7EB 60%, #9CA3AF 100%);
+  background: radial-gradient(circle at 40% 30%, #FFFFFF 0%, #F9FAFB 40%, #E5E7EB 70%, #9CA3AF 100%);
   border-radius: 46% 46% 30% 30% / 52% 52% 48% 48%;
   box-shadow:
     inset -7px -4px 0 rgba(0, 0, 0, 0.2),
