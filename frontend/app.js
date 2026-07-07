@@ -476,7 +476,8 @@ const offlineAPI = {
         let filtered = pool;
         if (knowledge) filtered = pool.filter(q => q.knowledge === knowledge);
         if (!filtered.length) return { code: 1, msg: '没有符合条件的题目' };
-        const shuffled = filtered.slice().sort(() => Math.random() - 0.5);
+        // 公平随机: 使用 crypto.getRandomValues 种子 + Fisher-Yates,避免 sort 偏置
+        const shuffled = shuffleFair(filtered);
         return { code: 0, data: shuffled.slice(0, count).map(adaptQuestion) };
     },
     async getKnowledge({ grade }) {
@@ -543,7 +544,7 @@ const offlineAPI = {
         const ids = Array.from(new Set(recs.map(r => r.question_id)));
         if (!ids.length) return { code: 1, msg: '错题本是空的,太棒了!' };
         const pool = [].concat(...Object.values(window.QUESTION_BANK || {}));
-        const picked = ids.sort(() => Math.random() - 0.5).slice(0, count);
+        const picked = shuffleFair(ids).slice(0, count);
         const qs = picked.map(id => pool.find(x => x.id === id)).filter(Boolean);
         return { code: 0, data: qs.map(adaptQuestion) };
     },
@@ -651,6 +652,30 @@ function toast(msg, type = '') {
     t.textContent = msg;
     t.className = 'toast show ' + type;
     setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// 公平随机洗牌:Fisher-Yates 算法,避免 Array.sort(() => Math.random() - 0.5) 的偏置问题
+// 老式 sort 洗牌对 >10 元素的数组不是均匀分布,题目顺序容易"看着像固定"
+function shuffleFair(arr) {
+    const a = arr.slice();
+    const n = a.length;
+    if (n <= 1) return a;
+    // 优先使用密码学级随机源 (现代浏览器/HTTPS 环境),回退到 Math.random
+    const useCrypto = typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function';
+    const rnd = () => {
+        if (useCrypto) {
+            // 用 32 位 int 取模,比一次 Math.random 更均匀
+            const buf = new Uint32Array(1);
+            crypto.getRandomValues(buf);
+            return buf[0] / 0x100000000;
+        }
+        return Math.random();
+    };
+    for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
 }
 
 function showPage(pageName) {
