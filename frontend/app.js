@@ -662,6 +662,35 @@ function showPage(pageName) {
     state.currentPage = pageName;
     window.scrollTo(0, 0);
 
+    // 各页面的进入钩子 (case 分发)
+    switch (pageName) {
+        case 'map':
+            // 关卡地图页 — 渲染 7 个区域卡片
+            if (typeof loadMap === 'function') loadMap();
+            break;
+        case 'practice':
+            // 战斗页 — 已在 startPractice/startWrongPractice 中渲染
+            break;
+        case 'wrong':
+            // 错题本
+            if (typeof loadWrongQuestions === 'function') loadWrongQuestions();
+            break;
+        case 'report':
+            // 学习报告
+            if (typeof loadReport === 'function') loadReport();
+            break;
+        case 'knowledge':
+            // 知识点选择
+            if (typeof loadKnowledgeList === 'function' && state.user) {
+                loadKnowledgeList(state.user.grade);
+            }
+            break;
+        case 'home':
+        default:
+            // 首页无需特殊处理
+            break;
+    }
+
     // BGM: 进入 practice 时启动,离开时停止
     if (window.SoundFX) {
         if (pageName === 'practice') {
@@ -1155,7 +1184,9 @@ async function startPractice({ grade, knowledge = '', count = 10, source = 'norm
     if (!res.data.length) return toast('没有题目', 'error');
 
     // 战斗数据（怪兽按知识点挑选）
-    const monster = pickMonster(knowledge);
+    // 未显式传 knowledge（如快速练习）时，回退用第一题的 knowledge，让怪兽与实际题目主题一致
+    const effectiveKnowledge = knowledge || (res.data[0] && res.data[0].knowledge) || '';
+    const monster = pickMonster(effectiveKnowledge);
     battleData = {
         monsterMaxHp: res.data.length * 10,
         monsterHp: res.data.length * 10,
@@ -1633,8 +1664,10 @@ function showBattleEnd(isWin) {
     }, isWin ? 1000 : 200);
 
     // P6 · 关卡地图:通关后解锁下一关 + 标记本关已通关
-    // 只在 source === 'levelmap' 的战斗中触发,避免快速练习/错题本误触发解锁
-    if (isWin && p.source === 'levelmap') {
+    // 任务要求: 用 currentIndex >= questions.length - 1 判断"通关"
+    // 仅 source === 'levelmap' 的战斗中触发,避免快速练习/错题本误触发解锁
+    const clearedReachedEnd = p.currentIndex >= (p.questions.length - 1);
+    if (isWin && p.source === 'levelmap' && clearedReachedEnd) {
         const knowledge = p.questions && p.questions[0] ? p.questions[0].knowledge : '';
         if (knowledge) {
             markLevelCleared(knowledge);
@@ -1643,6 +1676,11 @@ function showBattleEnd(isWin) {
                 // 延迟提示,等结果卡片显示后再 toast
                 setTimeout(() => {
                     toast(`🎉 已解锁新区域:${next.name}!`, 'success');
+                }, isWin ? 1400 : 600);
+            } else {
+                // 最后一关
+                setTimeout(() => {
+                    toast('🏆 已通关全部区域!你是真正的数学小英雄!', 'success');
                 }, isWin ? 1400 : 600);
             }
         }
