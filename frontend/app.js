@@ -386,8 +386,8 @@ async function checkLogin() {
     const res = await apiRouter.getUser();
     if (res.code === 0 && res.data) {
         state.user = res.data;
-        renderUser();
     }
+    renderUser();  // 无论登录与否都调一次,确保 UI 状态正确
 }
 
 function renderUser() {
