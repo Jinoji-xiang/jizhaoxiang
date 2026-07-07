@@ -2,87 +2,178 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小学数学题库 - 1~2年级</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#6366F1">
+    <title>小学数学题库 · 1~2年级</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧮%3C/text%3E%3C/svg%3E">
 </head>
 <body>
+    <!-- SVG 图标 sprite (供内嵌引用) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="i-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="3" width="16" height="18" rx="2"/>
+                <line x1="8" y1="7" x2="16" y2="7"/>
+                <line x1="8" y1="12" x2="10" y2="12"/><line x1="13" y1="12" x2="16" y2="12"/>
+                <line x1="8" y1="16" x2="10" y2="16"/><line x1="13" y1="16" x2="16" y2="16"/>
+            </symbol>
+            <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12L12 3l9 9v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/>
+            </symbol>
+            <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>
+            </symbol>
+            <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </symbol>
+            <symbol id="i-notebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                <line x1="9" y1="7" x2="15" y2="7"/>
+            </symbol>
+            <symbol id="i-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                <line x1="3" y1="20" x2="21" y2="20"/>
+            </symbol>
+            <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/>
+                <path d="M12 17v4"/><path d="M8 21h8"/><path d="M6 9a6 6 0 0 0 12 0V3H6z"/>
+            </symbol>
+            <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </symbol>
+            <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </symbol>
+            <symbol id="i-arrow-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </symbol>
+            <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </symbol>
+            <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </symbol>
+            <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </symbol>
+            <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+            </symbol>
+            <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+            </symbol>
+            <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
+            </symbol>
+        </defs>
+    </svg>
+
     <!-- 顶部导航 -->
     <nav class="navbar">
         <div class="nav-left">
-            <span class="logo">🧮</span>
-            <span class="title">小学数学题库</span>
+            <div class="logo-wrap">
+                <svg><use href="#i-calc"/></svg>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">小学数学题库</span>
+                <span class="brand-sub">1~2 年级 · 趣味练习</span>
+            </div>
         </div>
         <div class="nav-right" id="nav-right">
-            <a href="#" class="nav-link active" data-page="home">首页</a>
-            <a href="#" class="nav-link" data-page="practice">开始练习</a>
-            <a href="#" class="nav-link" data-page="wrong">错题本</a>
-            <a href="#" class="nav-link" data-page="report">学习报告</a>
+            <a href="#" class="nav-link active" data-page="home">
+                <svg><use href="#i-home"/></svg>首页
+            </a>
+            <a href="#" class="nav-link" data-page="practice">
+                <svg><use href="#i-zap"/></svg>开始练习
+            </a>
+            <a href="#" class="nav-link" data-page="wrong">
+                <svg><use href="#i-notebook"/></svg>错题本
+            </a>
+            <a href="#" class="nav-link" data-page="report">
+                <svg><use href="#i-bar"/></svg>学习报告
+            </a>
         </div>
     </nav>
 
-    <!-- 主页 -->
     <main id="app">
         <!-- 首页 -->
         <section class="page active" id="page-home">
-            <div class="hero">
-                <h1>🎉 欢迎来到小学数学乐园</h1>
-                <p class="subtitle">专为 1~2 年级小朋友设计的趣味数学练习</p>
+            <div class="hero-card">
+                <div class="hero-avatar" id="user-avatar">🐱</div>
+                <div class="hero-greeting">WELCOME</div>
+                <h1 class="hero-title">Hi, <span class="name" id="user-name">小朋友</span> 👋</h1>
+                <p class="hero-sub">今天也要加油哦 · 当前年级 <b id="user-grade">一年级</b></p>
 
-                <div class="login-card" id="login-card">
+                <!-- 登录/注册卡片 -->
+                <div class="login-card" id="login-card" style="display:none">
                     <h2 id="login-title">登录开始学习</h2>
                     <div class="form-tabs">
                         <span class="tab active" data-tab="login">登录</span>
                         <span class="tab" data-tab="register">注册</span>
                     </div>
-                    <input type="text" id="username" placeholder="用户名(2位以上)" />
-                    <input type="password" id="password" placeholder="密码(4位以上)" />
+                    <input type="text" id="username" placeholder="用户名(2位以上)" autocomplete="username" />
+                    <input type="password" id="password" placeholder="密码(4位以上)" autocomplete="current-password" />
                     <div id="grade-select-wrap" style="display:none">
-                        <label>选择年级:</label>
+                        <label>选择年级</label>
                         <select id="reg-grade">
                             <option value="1">一年级</option>
                             <option value="2">二年级</option>
                         </select>
                     </div>
-                    <button class="btn-primary" id="auth-btn">登录</button>
+                    <button class="btn-primary" id="auth-btn" style="width:100%">
+                        <svg><use href="#i-arrow"/></svg>登录
+                    </button>
                     <p class="tip">新用户请点击上方"注册"标签</p>
                 </div>
 
-                <div class="user-info-card" id="user-info-card" style="display:none">
-                    <div class="avatar-big" id="user-avatar">🐱</div>
-                    <h2>你好,<span id="user-name">小朋友</span>!</h2>
-                    <p>当前年级:<span id="user-grade">一年级</span></p>
-                    <div class="stat-row">
-                        <div class="stat">
+                <!-- 用户信息 + 统计 -->
+                <div id="user-info-card">
+                    <div class="stats-grid">
+                        <div class="stat-card">
                             <div class="stat-num" id="stat-total">0</div>
                             <div class="stat-label">答题数</div>
                         </div>
-                        <div class="stat">
+                        <div class="stat-card success">
                             <div class="stat-num" id="stat-correct">0</div>
                             <div class="stat-label">答对数</div>
                         </div>
-                        <div class="stat">
+                        <div class="stat-card accent">
                             <div class="stat-num" id="stat-accuracy">0%</div>
                             <div class="stat-label">正确率</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- 快捷操作 -->
                 <div class="quick-actions">
                     <button class="action-btn" data-action="quick-practice">
-                        <span class="emoji">⚡</span>
-                        <span class="text">快速练习</span>
-                        <span class="sub">10道随机题</span>
+                        <div class="action-icon">
+                            <svg><use href="#i-zap"/></svg>
+                        </div>
+                        <div>
+                            <div class="label">快速练习</div>
+                            <div class="desc">10 道随机题</div>
+                        </div>
                     </button>
                     <button class="action-btn" data-action="by-knowledge">
-                        <span class="emoji">📚</span>
-                        <span class="text">按知识点</span>
-                        <span class="sub">专项训练</span>
+                        <div class="action-icon">
+                            <svg><use href="#i-book"/></svg>
+                        </div>
+                        <div>
+                            <div class="label">按知识点</div>
+                            <div class="desc">专项训练</div>
+                        </div>
                     </button>
                     <button class="action-btn" data-action="wrong-practice">
-                        <span class="emoji">📒</span>
-                        <span class="text">错题重做</span>
-                        <span class="sub">巩固薄弱点</span>
+                        <div class="action-icon">
+                            <svg><use href="#i-refresh"/></svg>
+                        </div>
+                        <div>
+                            <div class="label">错题重做</div>
+                            <div class="desc">巩固薄弱点</div>
+                        </div>
                     </button>
                 </div>
             </div>
@@ -90,92 +181,143 @@
 
         <!-- 选择知识点 -->
         <section class="page" id="page-knowledge">
-            <h2>选择知识点</h2>
+            <div class="page-header">
+                <h2 class="page-title"><svg><use href="#i-book"/></svg>选择知识点</h2>
+            </div>
             <div class="grade-switch">
                 <button class="grade-btn active" data-grade="1">一年级</button>
                 <button class="grade-btn" data-grade="2">二年级</button>
             </div>
             <div class="knowledge-list" id="knowledge-list">
-                <div class="loading">加载中...</div>
+                <div class="loading">加载中</div>
             </div>
-            <button class="btn-back" data-page="home">← 返回首页</button>
+            <button class="btn-back" data-page="home">
+                <svg width="14" height="14"><use href="#i-arrow-l"/></svg>返回首页
+            </button>
         </section>
 
         <!-- 答题页 -->
         <section class="page" id="page-practice">
             <div class="practice-header">
-                <div class="progress">
-                    <span id="q-current">1</span> / <span id="q-total">10</span>
+                <div class="progress-wrap">
+                    <div class="progress-meta">
+                        <span class="progress-num">第 <b id="q-current">1</b> / <span id="q-total">10</span> 题</span>
+                        <span class="progress-score">✅ <span id="right-count">0</span> · ❌ <span id="wrong-count">0</span></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width:10%"></div>
+                    </div>
                 </div>
-                <div class="score-board">
-                    <span class="score-item">✅ <span id="right-count">0</span></span>
-                    <span class="score-item">❌ <span id="wrong-count">0</span></span>
+                <div class="timer-pill">
+                    <svg><use href="#i-clock"/></svg>
+                    <span id="timer">00:00</span>
                 </div>
-                <div class="timer" id="timer">⏱ 00:00</div>
             </div>
 
             <div class="question-card" id="question-card">
-                <div class="question-type" id="q-type">选择题</div>
-                <div class="question-content" id="q-content">
-                    加载题目中...
-                </div>
+                <div class="q-type-pill" id="q-type">选择题</div>
+                <div class="q-content" id="q-content">加载题目中…</div>
                 <div class="options-area" id="options-area"></div>
                 <div class="fill-area" id="fill-area" style="display:none">
-                    <input type="text" id="fill-input" placeholder="? 输入答案" />
+                    <input type="text" id="fill-input" placeholder="输入答案" inputmode="numeric" />
                 </div>
 
                 <div class="feedback" id="feedback" style="display:none"></div>
 
                 <div class="action-row">
-                    <button class="btn-secondary" id="btn-submit">提交</button>
-                    <button class="btn-primary" id="btn-next" style="display:none">下一题 →</button>
+                    <button class="btn-secondary" id="btn-submit">
+                        <svg><use href="#i-check"/></svg>提交答案
+                    </button>
+                    <button class="btn-primary" id="btn-next" style="display:none">
+                        下一题<svg><use href="#i-arrow"/></svg>
+                    </button>
                 </div>
             </div>
 
             <div class="result-card" id="result-card" style="display:none">
-                <h2>🎊 练习完成!</h2>
+                <div class="result-emoji" id="r-emoji">🌟</div>
+                <h2>练习完成！</h2>
+                <p class="result-comment" id="r-comment">继续加油哦！</p>
                 <div class="result-stats">
-                    <div class="big-stat">
-                        <div class="num-big" id="r-right">0</div>
-                        <div class="label">答对</div>
+                    <div class="stat-card right">
+                        <div class="stat-num" id="r-right">0</div>
+                        <div class="stat-label">答对</div>
                     </div>
-                    <div class="big-stat">
-                        <div class="num-big" id="r-wrong">0</div>
-                        <div class="label">答错</div>
+                    <div class="stat-card wrong">
+                        <div class="stat-num" id="r-wrong">0</div>
+                        <div class="stat-label">答错</div>
                     </div>
-                    <div class="big-stat">
-                        <div class="num-big" id="r-accuracy">0%</div>
-                        <div class="label">正确率</div>
+                    <div class="stat-card acc">
+                        <div class="stat-num" id="r-accuracy">0%</div>
+                        <div class="stat-label">正确率</div>
                     </div>
                 </div>
-                <div class="result-emoji" id="r-emoji">🌟</div>
-                <p class="result-comment" id="r-comment">继续加油哦!</p>
                 <div class="action-row">
-                    <button class="btn-primary" id="btn-again">再来一组</button>
-                    <button class="btn-secondary" data-page="wrong">查看错题 →</button>
+                    <button class="btn-primary" id="btn-again">
+                        <svg><use href="#i-refresh"/></svg>再来一组
+                    </button>
+                    <button class="btn-secondary" data-page="wrong">
+                        <svg><use href="#i-notebook"/></svg>查看错题
+                    </button>
                 </div>
             </div>
         </section>
 
         <!-- 错题本 -->
         <section class="page" id="page-wrong">
-            <h2>📒 我的错题本</h2>
-            <div class="wrong-summary" id="wrong-summary"></div>
-            <div class="wrong-list" id="wrong-list">
-                <div class="loading">加载中...</div>
+            <div class="page-header">
+                <h2 class="page-title"><svg><use href="#i-notebook"/></svg>我的错题本</h2>
             </div>
-            <button class="btn-back" data-page="home">← 返回首页</button>
+            <div class="wrong-summary" id="wrong-summary">
+                <div class="wrong-summary-icon">
+                    <svg width="22" height="22"><use href="#i-notebook"/></svg>
+                </div>
+                <div>
+                    <div class="num" id="wrong-count-display">0</div>
+                    <div class="label">道错题等待巩固</div>
+                </div>
+            </div>
+            <div class="wrong-list" id="wrong-list">
+                <div class="loading">加载中</div>
+            </div>
+            <button class="btn-back" data-page="home">
+                <svg width="14" height="14"><use href="#i-arrow-l"/></svg>返回首页
+            </button>
         </section>
 
         <!-- 学习报告 -->
         <section class="page" id="page-report">
-            <h2>📊 我的学习报告</h2>
+            <div class="page-header">
+                <h2 class="page-title"><svg><use href="#i-bar"/></svg>我的学习报告</h2>
+            </div>
             <div class="report-summary" id="report-summary">
-                <div class="loading">加载中...</div>
+                <div class="ring-wrap">
+                    <svg width="140" height="140" viewBox="0 0 140 140">
+                        <defs>
+                            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#6366F1"/>
+                                <stop offset="100%" stop-color="#8B5CF6"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="ring-track" cx="70" cy="70" r="58"/>
+                        <circle class="ring-progress" id="ring-progress" cx="70" cy="70" r="58" stroke-dasharray="0 364"/>
+                    </svg>
+                    <div class="ring-text">
+                        <div class="ring-num" id="ring-accuracy">0%</div>
+                        <div class="ring-lbl">正确率</div>
+                    </div>
+                </div>
+                <div class="report-mini" id="report-mini">
+                    <!-- 动态填充 -->
+                </div>
             </div>
             <h3>知识点掌握情况</h3>
-            <div class="knowledge-chart" id="knowledge-chart"></div>
-            <button class="btn-back" data-page="home">← 返回首页</button>
+            <div class="knowledge-chart" id="knowledge-chart">
+                <div class="loading">加载中</div>
+            </div>
+            <button class="btn-back" data-page="home">
+                <svg width="14" height="14"><use href="#i-arrow-l"/></svg>返回首页
+            </button>
         </section>
     </main>
 

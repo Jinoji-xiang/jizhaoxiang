@@ -497,11 +497,15 @@ function renderQuestion() {
     $('#right-count').textContent = p.rightCount;
     $('#wrong-count').textContent = p.wrongCount;
 
+    // 更新进度条
+    const fill = $('#progress-fill');
+    if (fill) fill.style.width = ((p.currentIndex + 1) / p.questions.length * 100) + '%';
+
     const typeText = { choice: '选择题', fill: '填空题', judge: '判断题' }[q.question_type] || '题目';
     $('#q-type').textContent = typeText;
-    $('#q-content').textContent = (p.currentIndex + 1) + '. ' + q.content;
+    $('#q-content').textContent = q.content;
     $('#feedback').style.display = 'none';
-    $('#btn-submit').style.display = 'block';
+    $('#btn-submit').style.display = 'flex';
     $('#btn-next').style.display = 'none';
 
     const optionsArea = $('#options-area');
@@ -513,7 +517,7 @@ function renderQuestion() {
     if (q.question_type === 'choice' && q.options) {
         optionsArea.style.display = 'grid';
         optionsArea.innerHTML = q.options.map((opt, i) =>
-            `<button class="option-btn" data-value="${opt}">${String.fromCharCode(65 + i)}. ${opt}</button>`
+            `<button class="option-btn" data-value="${opt}"><span class="opt-letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span></button>`
         ).join('');
         optionsArea.querySelectorAll('.option-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -645,12 +649,15 @@ async function loadWrongQuestions() {
         return;
     }
     const wrong = res.data;
-    summary.innerHTML = `
-        <div class="wrong-item">
+    // 兼容新的 wrong-count-display 和原 summary 结构
+    const wcDisplay = $('#wrong-count-display');
+    if (wcDisplay) wcDisplay.textContent = wrong.length;
+    if (summary.querySelector('.wrong-item')) {
+        summary.innerHTML = `
             <div class="num">${wrong.length}</div>
-            <div class="label">错题数量</div>
-        </div>
-    `;
+            <div class="label">道错题等待巩固</div>
+        `;
+    }
     if (wrong.length === 0) {
         list.innerHTML = '<div class="loading">🎉 太棒了！错题本是空的</div>';
         return;
@@ -714,33 +721,38 @@ async function loadReport() {
         return;
     }
     const d = res.data;
-    $('#report-summary').innerHTML = `
-        <div class="big-stat">
-            <div class="num-big">${d.total}</div>
-            <div class="label">总答题数</div>
-        </div>
-        <div class="big-stat">
-            <div class="num-big">${d.correct}</div>
-            <div class="label">答对数</div>
-        </div>
-        <div class="big-stat">
-            <div class="num-big">${d.accuracy}%</div>
-            <div class="label">正确率</div>
-        </div>
-    `;
+
+    // 圆环图:周长 2*PI*58 ≈ 364
+    const circumference = 2 * Math.PI * 58;
+    const ringEl = $('#ring-progress');
+    const ringAcc = $('#ring-accuracy');
+    if (ringEl) ringEl.setAttribute('stroke-dasharray', `${(d.accuracy / 100) * circumference} ${circumference}`);
+    if (ringAcc) ringAcc.textContent = d.accuracy + '%';
+
+    // 右侧小卡
+    const mini = $('#report-mini');
+    if (mini) {
+        mini.innerHTML = `
+            <div class="report-mini-card">
+                <div class="label">总答题数</div>
+                <div class="num">${d.total}</div>
+            </div>
+            <div class="report-mini-card">
+                <div class="label">答对数</div>
+                <div class="num">${d.correct}</div>
+            </div>
+        `;
+    }
+
     if (!d.knowledge_stats || d.knowledge_stats.length === 0) {
         $('#knowledge-chart').innerHTML = '<div class="loading">还没有答题记录，去做几道题吧</div>';
         return;
     }
     $('#knowledge-chart').innerHTML = d.knowledge_stats.map(k => `
-        <div class="k-bar ${k.accuracy < 60 ? 'weak' : ''}">
-            <div class="label">
-                <span>${k.name} <small>(${k.correct}/${k.total})</small></span>
-                <span>${k.accuracy}%</span>
-            </div>
-            <div class="bar-bg">
-                <div class="bar-fill" style="width:${k.accuracy}%"></div>
-            </div>
+        <div class="k-bar ${k.accuracy < 60 ? 'weak' : (k.accuracy >= 90 ? 'strong' : '')}">
+            <div class="label">${k.name} <small>(${k.correct}/${k.total})</small></div>
+            <div class="bar-bg"><div class="bar-fill" style="width:${k.accuracy}%"></div></div>
+            <div class="pct">${k.accuracy}%</div>
         </div>
     `).join('');
 }
