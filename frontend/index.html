@@ -212,8 +212,10 @@
                 <div class="cloud cloud-1"></div>
                 <div class="cloud cloud-2"></div>
 
-                <!-- 玩家立绘 (纯单 div + box-shadow 像素艺术) -->
-                <div class="player-sprite idle" id="player-sprite"></div>
+                <!-- 玩家立绘 (用用户选的人物图片) -->
+                <div class="player-sprite idle" id="player-sprite">
+                    <img id="player-sprite-img" alt="player" />
+                </div>
 
                 <!-- 史莱姆 (纯单 div + box-shadow 像素艺术) -->
                 <div class="monster-sprite idle" id="monster-sprite">
@@ -375,6 +377,27 @@
                     <div class="grade-pills">
                         <button type="button" class="grade-pill active" data-grade="1">一年级</button>
                         <button type="button" class="grade-pill" data-grade="2">二年级</button>
+                    </div>
+                </div>
+                <div class="field" id="modal-character-field" style="display:none">
+                    <span class="field-label">选择你的小伙伴</span>
+                    <div class="char-picker" id="char-picker">
+                        <button type="button" class="char-card active" data-char="1">
+                            <img src="assets/avatars/char-1.png" alt="双马尾女孩" />
+                            <span class="char-name">小樱</span>
+                        </button>
+                        <button type="button" class="char-card" data-char="2">
+                            <img src="assets/avatars/char-2.png" alt="短发男孩" />
+                            <span class="char-name">小军</span>
+                        </button>
+                        <button type="button" class="char-card" data-char="3">
+                            <img src="assets/avatars/char-3.png" alt="卷发女孩" />
+                            <span class="char-name">小米</span>
+                        </button>
+                        <button type="button" class="char-card" data-char="4">
+                            <img src="assets/avatars/char-4.png" alt="金发男孩" />
+                            <span class="char-name">小阳</span>
+                        </button>
                     </div>
                 </div>
                 <button class="btn-primary modal-submit" id="modal-submit">

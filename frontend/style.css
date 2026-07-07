@@ -221,13 +221,20 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 28px;
 }
 .hero-avatar {
-  width: 80px; height: 80px;
+  width: 88px; height: 88px;
   border-radius: 24px;
-  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  background: linear-gradient(135deg, #FEF3C7 0%, #FCE7F3 50%, #E0E7FF 100%);
   display: grid; place-items: center;
   font-size: 40px;
   margin: 0 auto 16px;
-  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 24px -4px rgba(99, 102, 241, 0.25);
+  overflow: hidden;
+}
+.hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ============== 数据统计 ============== */
@@ -1186,47 +1193,28 @@ input:focus, select:focus {
   100% { transform: translateX(calc(100vw + 100px)); }
 }
 
-/* 玩家立绘 - 单 div + box-shadow 像素艺术 (绝对保证显示) */
+/* 玩家立绘 - 用用户注册时选的人物图片 */
 .player-sprite {
   position: absolute;
-  left: 12%;
-  bottom: 36px;
+  left: 8%;
+  bottom: 8px;
   z-index: 5;
-  width: 64px;
-  height: 80px;
+  width: 96px;
+  height: 110px;
   transform-origin: bottom center;
   transition: filter 0.1s;
-  /* 用 box-shadow 画细节:身体 36x32 + 头 28x28 + 帽 32x14 + 剑 5x32 */
-  background:
-    /* 帽 */
-    radial-gradient(circle at 32px 6px, #6366F1 6px, transparent 6.5px),
-    /* 头 */
-    radial-gradient(circle at 32px 24px, #FCD34D 14px, transparent 14.5px),
-    /* 身体 */
-    radial-gradient(circle at 32px 60px, #6366F1 18px, transparent 18.5px),
-    /* 剑光 */
-    radial-gradient(circle at 64px 50px, #E2E8F0 3px, transparent 3.5px),
-    /* 默认背景(透明) */
-    transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
 }
-.player-sprite::before {
-  /* 左眼 */
-  content: '';
-  position: absolute;
-  width: 4px; height: 5px;
-  background: #1F2937;
-  border-radius: 50%;
-  top: 22px; left: 26px;
-  box-shadow: 12px 0 0 #1F2937;  /* 右眼 */
-}
-.player-sprite::after {
-  /* 嘴 */
-  content: '';
-  position: absolute;
-  width: 6px; height: 2px;
-  background: #1F2937;
-  border-radius: 0 0 6px 6px;
-  top: 32px; left: 29px;
+.player-sprite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* AI 生成的图是白底, 用 multiply 把白色透明化, 保留角色线条/颜色 */
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
 }
 
 .player-sprite.idle {
@@ -1234,27 +1222,27 @@ input:focus, select:focus {
 }
 @keyframes playerIdle {
   0%, 100% { transform: translateY(0) scaleY(1); }
-  50% { transform: translateY(-3px) scaleY(0.98); }
+  50% { transform: translateY(-4px) scaleY(0.98); }
 }
 
 .player-sprite.charging { animation: playerCharge 0.5s ease-out; }
 @keyframes playerCharge {
   0% { transform: scale(1); }
-  50% { transform: scale(0.92); }
-  100% { transform: scale(1.05); }
+  50% { transform: scale(0.9) translateX(-4px); }
+  100% { transform: scale(1.1) translateX(-4px); }
 }
 .player-sprite.attacking { animation: playerAttack 0.5s ease-out; }
 @keyframes playerAttack {
   0% { transform: translateX(0); }
   30% { transform: translateX(0) scaleX(0.95); }
-  60% { transform: translateX(180px) scaleX(1.05); }
+  60% { transform: translateX(160px) scaleX(1.05); }
   100% { transform: translateX(0); }
 }
 .player-sprite.hurt { animation: playerHurt 0.4s; }
 @keyframes playerHurt {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-12px) rotate(-3deg); filter: brightness(2) hue-rotate(320deg); }
-  75% { transform: translateX(8px) rotate(2deg); filter: brightness(1.5); }
+  0%, 100% { transform: translateX(0); filter: brightness(1) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
+  25% { transform: translateX(-12px) rotate(-3deg); filter: brightness(1.3) hue-rotate(320deg) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
+  75% { transform: translateX(8px) rotate(2deg); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
 }
 
 /* 怪兽立绘 - 史莱姆 单 div + 渐变 */
@@ -1857,6 +1845,68 @@ input:focus, select:focus {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* 人物选择器 */
+.char-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.char-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 6px 10px;
+  border-radius: 14px;
+  border: 2px solid var(--border-soft);
+  background: var(--bg);
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  position: relative;
+}
+.char-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.04);
+}
+.char-card img {
+  width: 100%;
+  max-width: 90px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  margin-bottom: 4px;
+  pointer-events: none;
+}
+.char-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  transition: color 0.18s;
+}
+.char-card.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+  transform: translateY(-2px);
+}
+.char-card.active .char-name { color: var(--primary); }
+.char-card.active::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size: 11px 11px;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
 }
 
 .modal-submit {

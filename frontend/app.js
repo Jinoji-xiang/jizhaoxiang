@@ -83,15 +83,16 @@ offlineDB.load();
 
 // ============== 离线 API ==============
 const offlineAPI = {
-    async register({ username, password, grade }) {
+    async register({ username, password, grade, avatar }) {
         if (!username || username.length < 2) return { code: 1, msg: '用户名至少2个字符' };
         if (!password || password.length < 4) return { code: 1, msg: '密码至少4个字符' };
         if (offlineDB.users.find(u => u.username === username)) return { code: 1, msg: '用户名已被占用' };
-        const avatars = ['🐱','🐶','🐰','🐻','🐼','🦊','🐯','🐸'];
+        // 如果用户传了 avatar 路径,使用;否则用 emoji 兜底
+        const userAvatar = avatar || `emoji:${['🐱','🐶','🐰','🐻','🐼','🦊','🐯','🐸'][Math.floor(Math.random()*8)]}`;
         const user = {
             id: offlineDB.nextUserId++,
             username, password, grade,
-            avatar: avatars[Math.floor(Math.random() * avatars.length)],
+            avatar: userAvatar,
             total_questions: 0, correct_count: 0
         };
         offlineDB.users.push(user);
@@ -354,6 +355,7 @@ document.addEventListener('click', (e) => {
 
 // ========== 登录/注册 弹窗 ==========
 let _authMode = 'login';  // 当前模式:'login' 或 'register'
+let _selectedChar = 1;    // 注册时选的人物 1-4
 
 function openLoginModal(mode = 'login') {
     setAuthMode(mode);
@@ -381,11 +383,13 @@ function setAuthMode(mode) {
         $('#modal-sub').textContent = '登录后继续你的冒险之旅';
         $('#modal-submit-text').textContent = '登录';
         $('#modal-grade-field').style.display = 'none';
+        $('#modal-character-field').style.display = 'none';
     } else {
         $('#modal-title').textContent = '加入数学乐园';
         $('#modal-sub').textContent = '注册后开启专属学习计划';
         $('#modal-submit-text').textContent = '注册';
         $('#modal-grade-field').style.display = 'flex';
+        $('#modal-character-field').style.display = 'flex';
     }
 }
 
@@ -416,6 +420,15 @@ $$('.grade-pill').forEach(p => {
     });
 });
 
+// 人物卡选择
+$$('.char-card').forEach(card => {
+    card.addEventListener('click', () => {
+        $$('.char-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        _selectedChar = parseInt(card.dataset.char);
+    });
+});
+
 // 提交
 $('#modal-submit').addEventListener('click', async () => {
     const mode = _authMode;
@@ -430,6 +443,7 @@ $('#modal-submit').addEventListener('click', async () => {
     if (mode === 'register') {
         const activePill = document.querySelector('.grade-pill.active');
         body.grade = activePill ? parseInt(activePill.dataset.grade) : 1;
+        body.avatar = `assets/avatars/char-${_selectedChar}.png`;
     }
 
     const submitBtn = $('#modal-submit');
@@ -463,6 +477,22 @@ async function checkLogin() {
     renderUser();
 }
 
+// 渲染用户头像:支持图片路径或 emoji 兜底
+function renderAvatar(avatarData, targetEl, size = 'normal') {
+    if (!targetEl) return;
+    if (avatarData && avatarData.startsWith && avatarData.startsWith('assets/')) {
+        // 图片路径
+        const sizePx = size === 'large' ? '88px' : '64px';
+        targetEl.innerHTML = `<img src="${avatarData}" alt="头像" style="width:${sizePx};height:${sizePx};border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#EEF2FF,#FCE7F3);" />`;
+    } else if (avatarData && avatarData.startsWith && avatarData.startsWith('emoji:')) {
+        // emoji: 形式
+        targetEl.textContent = avatarData.slice(6) || '🐱';
+    } else {
+        // 旧版直接是 emoji 字符
+        targetEl.textContent = avatarData || '🐱';
+    }
+}
+
 function renderUser() {
     const navLoginBtn = $('#btn-open-login');
     if (!state.user) {
@@ -474,7 +504,7 @@ function renderUser() {
     // 已登录
     if (navLoginBtn) navLoginBtn.hidden = true;
     $('#user-info-card').style.display = 'block';
-    $('#user-avatar').textContent = state.user.avatar;
+    renderAvatar(state.user.avatar, $('#user-avatar'));
     $('#user-name').textContent = state.user.username;
     $('#user-grade').textContent = state.user.grade === 1 ? '一年级' : '二年级';
     $('#stat-total').textContent = state.user.total_questions;
@@ -629,6 +659,12 @@ async function startPractice({ grade, knowledge = '', count = 10, source = 'norm
     $('#monster-sprite').classList.add('idle');
     $('#player-sprite').classList.remove('attacking', 'charging', 'hurt');
     $('#player-sprite').classList.add('idle');
+    // 同步玩家头像图(从用户选择)
+    const playerImg = $('#player-sprite-img');
+    if (playerImg) {
+        const av = state.user.avatar;
+        playerImg.src = (av && av.startsWith && av.startsWith('assets/')) ? av : 'assets/avatars/char-1.png';
+    }
     $('#damage-numbers').innerHTML = '';
 
     renderQuestion();
@@ -1133,6 +1169,12 @@ async function startWrongPractice() {
     $('#monster-sprite').classList.add('idle');
     $('#player-sprite').classList.remove('attacking', 'charging', 'hurt');
     $('#player-sprite').classList.add('idle');
+    // 同步玩家头像图
+    const playerImg2 = $('#player-sprite-img');
+    if (playerImg2) {
+        const av = state.user.avatar;
+        playerImg2.src = (av && av.startsWith && av.startsWith('assets/')) ? av : 'assets/avatars/char-1.png';
+    }
     $('#damage-numbers').innerHTML = '';
 
     renderQuestion();
