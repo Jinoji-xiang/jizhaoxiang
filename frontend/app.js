@@ -636,55 +636,69 @@ function startTimer() {
 }
 
 function renderQuestion() {
-    const p = state.practice;
-    const q = p.questions[p.currentIndex];
+    try {
+        const p = state.practice;
+        if (!p || !p.questions || !p.questions.length) {
+            console.error('renderQuestion: state.practice invalid', p);
+            return;
+        }
+        const q = p.questions[p.currentIndex];
+        if (!q) {
+            console.error('renderQuestion: no current question', p.currentIndex);
+            return;
+        }
 
-    $('#q-current').textContent = p.currentIndex + 1;
-    $('#q-total').textContent = p.questions.length;
-    $('#right-count').textContent = p.rightCount;
-    $('#wrong-count').textContent = p.wrongCount;
+        $('#q-current').textContent = p.currentIndex + 1;
+        $('#q-total').textContent = p.questions.length;
+        $('#right-count').textContent = p.rightCount;
+        $('#wrong-count').textContent = p.wrongCount;
 
-    // 更新进度条
-    const fill = $('#progress-fill');
-    if (fill) fill.style.width = ((p.currentIndex + 1) / p.questions.length * 100) + '%';
+        // 更新进度条
+        const fill = $('#progress-fill');
+        if (fill) fill.style.width = ((p.currentIndex + 1) / p.questions.length * 100) + '%';
 
-    const typeText = { choice: '选择题', fill: '填空题', judge: '判断题' }[q.question_type] || '题目';
-    $('#q-type').textContent = typeText;
-    $('#q-content').textContent = q.content;
-    $('#feedback').style.display = 'none';
-    $('#btn-submit').style.display = 'flex';
-    $('#btn-next').style.display = 'none';
+        const typeText = { choice: '选择题', fill: '填空题', judge: '判断题' }[q.question_type] || '题目';
+        $('#q-type').textContent = typeText;
+        $('#q-content').textContent = q.content || '(题目内容缺失)';
+        $('#feedback').style.display = 'none';
+        $('#btn-submit').style.display = 'flex';
+        $('#btn-next').style.display = 'none';
 
-    // 解锁答题区
-    const bq = $('#question-card');
-    if (bq) bq.classList.remove('locked');
+        // 解锁答题区
+        const bq = $('#question-card');
+        if (bq) bq.classList.remove('locked');
 
-    const optionsArea = $('#options-area');
-    const fillArea = $('#fill-area');
-    optionsArea.innerHTML = '';
-    fillArea.style.display = 'none';
-    optionsArea.style.display = 'none';
+        const optionsArea = $('#options-area');
+        const fillArea = $('#fill-area');
+        optionsArea.innerHTML = '';
+        fillArea.style.display = 'none';
+        optionsArea.style.display = 'none';
 
-    if (q.question_type === 'choice' && q.options) {
-        optionsArea.style.display = 'grid';
-        optionsArea.innerHTML = q.options.map((opt, i) =>
-            `<button class="option-btn" data-value="${opt}"><span class="opt-letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span></button>`
-        ).join('');
-        optionsArea.querySelectorAll('.option-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                optionsArea.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
+        if (q.question_type === 'choice' && q.options) {
+            optionsArea.style.display = 'grid';
+            optionsArea.innerHTML = q.options.map((opt, i) =>
+                `<button class="option-btn" data-value="${opt}"><span class="opt-letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span></button>`
+            ).join('');
+            optionsArea.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    optionsArea.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
             });
-        });
-    } else {
-        fillArea.style.display = 'block';
-        $('#fill-input').value = '';
-        $('#fill-input').focus();
-        $('#fill-input').onkeydown = (e) => {
-            if (e.key === 'Enter') $('#btn-submit').click();
-        };
+        } else {
+            fillArea.style.display = 'block';
+            $('#fill-input').value = '';
+            $('#fill-input').focus();
+            $('#fill-input').onkeydown = (e) => {
+                if (e.key === 'Enter') $('#btn-submit').click();
+            };
+        }
+        state.practice.questionStartTime = Date.now();
+    } catch (err) {
+        console.error('renderQuestion failed:', err);
+        const qc = $('#q-content');
+        if (qc) qc.textContent = '题目加载失败: ' + err.message;
     }
-    state.practice.questionStartTime = Date.now();
 }
 
 $('#btn-submit').addEventListener('click', async () => {

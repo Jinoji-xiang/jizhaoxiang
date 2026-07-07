@@ -1164,17 +1164,49 @@ input:focus, select:focus {
   100% { transform: translateX(calc(100vw + 100px)); }
 }
 
-/* 玩家立绘 */
+/* 玩家立绘 - 单 div + box-shadow 像素艺术 (绝对保证显示) */
 .player-sprite {
   position: absolute;
   left: 12%;
   bottom: 36px;
   z-index: 5;
-  width: 56px;
-  height: 76px;
+  width: 64px;
+  height: 80px;
   transform-origin: bottom center;
   transition: filter 0.1s;
+  /* 用 box-shadow 画细节:身体 36x32 + 头 28x28 + 帽 32x14 + 剑 5x32 */
+  background:
+    /* 帽 */
+    radial-gradient(circle at 32px 6px, #6366F1 6px, transparent 6.5px),
+    /* 头 */
+    radial-gradient(circle at 32px 24px, #FCD34D 14px, transparent 14.5px),
+    /* 身体 */
+    radial-gradient(circle at 32px 60px, #6366F1 18px, transparent 18.5px),
+    /* 剑光 */
+    radial-gradient(circle at 64px 50px, #E2E8F0 3px, transparent 3.5px),
+    /* 默认背景(透明) */
+    transparent;
 }
+.player-sprite::before {
+  /* 左眼 */
+  content: '';
+  position: absolute;
+  width: 4px; height: 5px;
+  background: #1F2937;
+  border-radius: 50%;
+  top: 22px; left: 26px;
+  box-shadow: 12px 0 0 #1F2937;  /* 右眼 */
+}
+.player-sprite::after {
+  /* 嘴 */
+  content: '';
+  position: absolute;
+  width: 6px; height: 2px;
+  background: #1F2937;
+  border-radius: 0 0 6px 6px;
+  top: 32px; left: 29px;
+}
+
 .player-sprite.idle {
   animation: playerIdle 1.4s ease-in-out infinite;
 }
@@ -1182,168 +1214,81 @@ input:focus, select:focus {
   0%, 100% { transform: translateY(0) scaleY(1); }
   50% { transform: translateY(-3px) scaleY(0.98); }
 }
-/* 玩家身体：蓝色斗篷 + 黄色头 */
-.player-head {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 28px; height: 28px;
-  background: #FCD34D;
-  border-radius: 50% 50% 45% 45%;
-  box-shadow: inset -3px -3px 0 rgba(0,0,0,0.1);
-}
-.player-eye {
-  position: absolute;
-  width: 4px; height: 5px;
-  background: #1F2937;
-  border-radius: 50%;
-  top: 12px;
-}
-.player-eye.l { left: 7px; }
-.player-eye.r { right: 7px; }
-.player-helmet {
-  position: absolute;
-  top: -3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 32px; height: 14px;
-  background: #6366F1;
-  border-radius: 50% 50% 30% 30%;
-}
-.player-body {
-  position: absolute;
-  top: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 36px; height: 32px;
-  background: #6366F1;
-  border-radius: 4px 4px 8px 8px;
-  box-shadow: inset -4px -2px 0 rgba(0,0,0,0.15);
-}
-.player-sword {
-  position: absolute;
-  top: 32px;
-  right: -10px;
-  width: 5px; height: 32px;
-  background: linear-gradient(180deg, #FCD34D 0%, #FCD34D 8%, #E2E8F0 8%, #E2E8F0 100%);
-  transform: rotate(20deg);
-  transform-origin: top center;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-.player-sword::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px; height: 4px;
-  background: #92400E;
-  border-radius: 2px;
-}
 
-/* 玩家状态动画 */
-.player-sprite.charging {
-  animation: playerCharge 0.5s ease-out;
-}
+.player-sprite.charging { animation: playerCharge 0.5s ease-out; }
 @keyframes playerCharge {
   0% { transform: scale(1); }
   50% { transform: scale(0.92); }
   100% { transform: scale(1.05); }
 }
-.player-sprite.attacking {
-  animation: playerAttack 0.5s ease-out;
-}
+.player-sprite.attacking { animation: playerAttack 0.5s ease-out; }
 @keyframes playerAttack {
   0% { transform: translateX(0); }
   30% { transform: translateX(0) scaleX(0.95); }
   60% { transform: translateX(180px) scaleX(1.05); }
   100% { transform: translateX(0); }
 }
-.player-sprite.hurt {
-  animation: playerHurt 0.4s;
-}
+.player-sprite.hurt { animation: playerHurt 0.4s; }
 @keyframes playerHurt {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-12px) rotate(-3deg); filter: brightness(2) hue-rotate(320deg); }
   75% { transform: translateX(8px) rotate(2deg); filter: brightness(1.5); }
 }
 
-/* 怪兽立绘 - 史莱姆 */
+/* 怪兽立绘 - 史莱姆 单 div + 渐变 */
 .monster-sprite {
   position: absolute;
   right: 12%;
   bottom: 40px;
   z-index: 5;
   width: 80px;
-  height: 90px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  height: 70px;
+  display: block;
   transition: filter 0.1s;
+  /* 史莱姆身体:椭圆形,绿色渐变 */
+  background: linear-gradient(180deg, #4ADE80 0%, #22C55E 70%, #16A34A 100%);
+  border-radius: 50% 50% 45% 45% / 60% 60% 35% 35%;
+  box-shadow:
+    inset -8px -4px 0 rgba(0, 0, 0, 0.15),
+    inset 4px 4px 0 rgba(255, 255, 255, 0.4),
+    0 4px 0 #15803D;  /* 底部阴影 */
 }
-.monster-sprite.idle {
-  animation: monsterIdle 1.8s ease-in-out infinite;
+/* 史莱姆眼睛 - 用 ::before (左) ::after (右) */
+.monster-sprite::before {
+  content: '';
+  position: absolute;
+  width: 10px; height: 12px;
+  background: #1F2937;
+  border-radius: 50%;
+  top: 22px; left: 22px;
+  box-shadow: 26px 0 0 #1F2937;  /* 第二个眼睛 */
 }
+/* 史莱姆高光 - 在 .monster-sprite 上加 linear-gradient 模拟 */
+.monster-sprite .slime-mouth {
+  position: absolute;
+  width: 20px; height: 8px;
+  background: #1F2937;
+  border-radius: 0 0 20px 20px;
+  top: 42px; left: 50%;
+  transform: translateX(-50%);
+}
+/* 史莱姆顶部高光 - 用 ::after 模拟 */
+.monster-sprite::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  top: 14px; left: 18px;
+}
+
+.monster-sprite.idle { animation: monsterIdle 1.8s ease-in-out infinite; }
 @keyframes monsterIdle {
   0%, 100% { transform: translateY(0) scaleX(1); }
   50% { transform: translateY(-4px) scaleX(1.05); }
 }
-.slime-body {
-  position: relative;
-  width: 80px; height: 64px;
-  background: linear-gradient(180deg, #4ADE80 0%, #22C55E 70%, #16A34A 100%);
-  border-radius: 50% 50% 45% 45% / 60% 60% 35% 35%;
-  box-shadow: inset -8px -4px 0 rgba(0, 0, 0, 0.15), inset 4px 4px 0 rgba(255, 255, 255, 0.4);
-  margin-top: auto;
-}
-.slime-shine {
-  position: absolute;
-  width: 14px; height: 10px;
-  background: rgba(255, 255, 255, 0.65);
-  border-radius: 50%;
-  top: 12px; left: 16px;
-  filter: blur(0.5px);
-}
-.slime-eye {
-  position: absolute;
-  width: 8px; height: 10px;
-  background: #1F2937;
-  border-radius: 50%;
-  top: 22px;
-}
-.slime-eye.l { left: 20px; }
-.slime-eye.r { right: 20px; }
-.slime-eye::after {
-  content: '';
-  position: absolute;
-  width: 3px; height: 3px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  right: 1px;
-}
-.slime-mouth {
-  position: absolute;
-  width: 18px; height: 8px;
-  background: #1F2937;
-  border-radius: 0 0 18px 18px;
-  top: 38px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.slime-bounce { animation: slimeBounce 0.5s ease-out; }
-@keyframes slimeBounce {
-  0% { transform: scale(1); }
-  20% { transform: scaleX(1.15) scaleY(0.85); }
-  40% { transform: scaleX(0.9) scaleY(1.1); }
-  60% { transform: scaleX(1.1) scaleY(0.9); }
-  100% { transform: scale(1); }
-}
-.monster-sprite.hurt {
-  animation: monsterHurt 0.5s;
-}
+
+.monster-sprite.hurt { animation: monsterHurt 0.5s; }
 @keyframes monsterHurt {
   0%, 100% { transform: translateX(0); }
   10% { transform: translateX(-15px) scale(1.05); filter: brightness(2) saturate(0); }
@@ -1351,18 +1296,14 @@ input:focus, select:focus {
   30% { transform: translateX(-8px) scale(1.02); }
   40% { transform: translateX(0); filter: brightness(1); }
 }
-.monster-sprite.attacking {
-  animation: monsterAttack 0.5s;
-}
+.monster-sprite.attacking { animation: monsterAttack 0.5s; }
 @keyframes monsterAttack {
   0% { transform: translateX(0); }
   40% { transform: translateX(-180px) scale(1.1); }
   60% { transform: translateX(-180px) scale(1.1); }
   100% { transform: translateX(0); }
 }
-.monster-sprite.dying {
-  animation: monsterDying 1s ease-in forwards;
-}
+.monster-sprite.dying { animation: monsterDying 1s ease-in forwards; }
 @keyframes monsterDying {
   0% { transform: scale(1); opacity: 1; }
   20% { transform: scale(1.2); }
