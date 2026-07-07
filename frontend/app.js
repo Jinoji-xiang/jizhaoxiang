@@ -762,6 +762,15 @@ function setAuthMode(mode) {
 // 打开弹窗
 $('#btn-open-login').addEventListener('click', () => openLoginModal('login'));
 
+// P5 · 顶栏声音开关按钮
+$('#btn-sound').addEventListener('click', () => {
+    if (!window.SoundFX) return;
+    const muted = SoundFX.toggleMute();
+    $('#btn-sound').classList.toggle('muted', muted);
+    // 给用户一个轻微的听觉反馈(取消静音时); 静音时当然不发声
+    if (!muted) SoundFX.playCorrect();
+});
+
 // 顶栏成就按钮
 $('#btn-open-achievements').addEventListener('click', () => openAchievementModal());
 $('#achievement-close').addEventListener('click', closeAchievementModal);
@@ -2102,6 +2111,14 @@ window.SoundFX = (function () {
     document.addEventListener('keydown', handler, true);
     document.addEventListener('touchstart', handler, true);
 })();
+
+// DOM 加载完后,把 #btn-sound 的视觉状态与持久化的 mute 同步
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn-sound');
+    if (btn && window.SoundFX && SoundFX.isMuted()) {
+        btn.classList.add('muted');
+    }
+});
 
 // ========== 启动 ==========
 // P7: 初始化技能槽 UI (默认全部可用, 真实持久状态在登录后由 SkillManager.render 刷新)

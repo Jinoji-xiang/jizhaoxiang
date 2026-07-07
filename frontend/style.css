@@ -2305,6 +2305,51 @@ input:focus, select:focus {
 .trophy-badge[hidden] { display: none; }
 
 /* ==========================================================
+   顶栏 声音开关按钮 (P5)
+   ========================================================== */
+.nav-sound-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  transition: all 0.18s cubic-bezier(.22,.61,.36,1);
+  position: relative;
+}
+.nav-sound-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.18);
+}
+.nav-sound-btn:active { transform: translateY(0); }
+.nav-sound-btn svg {
+  width: 18px;
+  height: 18px;
+}
+/* 默认(unmuted)显示喇叭, 隐藏静音图标 */
+.nav-sound-btn .sound-off { display: none; }
+.nav-sound-btn.muted .sound-on { display: none; }
+.nav-sound-btn.muted .sound-off { display: block; }
+.nav-sound-btn.muted {
+  color: var(--danger);
+  border-color: #FCA5A5;
+  background: #FEF2F2;
+}
+.nav-sound-btn.muted:hover {
+  border-color: var(--danger);
+  color: #B91C1C;
+  background: #FEE2E2;
+}
+
+/* ==========================================================
    成就弹窗
    ========================================================== */
 .achievement-dialog { max-width: 460px; padding: 32px 28px 24px; }
