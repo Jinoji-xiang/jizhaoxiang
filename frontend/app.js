@@ -1229,7 +1229,7 @@ async function startPractice({ grade, knowledge = '', count = 10, source = 'norm
     // 同步玩家头像图(从用户选择)
     const playerImg = $('#player-sprite-img');
     if (playerImg) {
-        const av = state.user.avatar;
+        const av = state.user && state.user.avatar;
         playerImg.src = (av && av.startsWith && av.startsWith('assets/')) ? av : 'assets/avatars/char-1.png';
     }
     $('#damage-numbers').innerHTML = '';
@@ -1815,7 +1815,7 @@ async function startWrongPractice() {
     // 同步玩家头像图
     const playerImg2 = $('#player-sprite-img');
     if (playerImg2) {
-        const av = state.user.avatar;
+        const av = state.user && state.user.avatar;
         playerImg2.src = (av && av.startsWith && av.startsWith('assets/')) ? av : 'assets/avatars/char-1.png';
     }
     $('#damage-numbers').innerHTML = '';
