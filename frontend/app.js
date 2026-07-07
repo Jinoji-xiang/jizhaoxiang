@@ -483,19 +483,22 @@ function renderUser() {
 }
 
 // 退出登录
-$(document).on('click', '#btn-logout', async () => {
-    if (!confirm('确定要退出登录吗？退出后会清除本地数据，需要重新登录。')) return;
-    await apiRouter.logout();
-    // 离线模式清理
-    try {
-        sessionStorage.removeItem('offline_user_id');
-        localStorage.removeItem('math_quiz_users');
-        localStorage.removeItem('math_quiz_records');
-    } catch (e) {}
-    state.user = null;
-    renderUser();
-    showPage('home');
-    toast('已退出登录', 'success');
+document.addEventListener('click', async (e) => {
+    const logout = e.target.closest && e.target.closest('#btn-logout');
+    if (logout) {
+        if (!confirm('确定要退出登录吗？退出后会清除本地数据，需要重新登录。')) return;
+        await apiRouter.logout();
+        // 离线模式清理
+        try {
+            sessionStorage.removeItem('offline_user_id');
+            localStorage.removeItem('math_quiz_users');
+            localStorage.removeItem('math_quiz_records');
+        } catch (e) {}
+        state.user = null;
+        renderUser();
+        showPage('home');
+        toast('已退出登录', 'success');
+    }
 });
 
 // ========== 快捷操作 ==========
@@ -1016,11 +1019,14 @@ $('#btn-again').addEventListener('click', () => {
 });
 
 // 撤退按钮
-$(document).on('click', '#btn-flee', () => {
-    if (confirm('确定要撤退吗？当前战斗进度会丢失。')) {
-        battleState = BATTLE.FINISHED;
-        clearInterval(_quizTimer);
-        showPage('home');
+document.addEventListener('click', (e) => {
+    const flee = e.target.closest && e.target.closest('#btn-flee');
+    if (flee) {
+        if (confirm('确定要撤退吗？当前战斗进度会丢失。')) {
+            battleState = BATTLE.FINISHED;
+            clearInterval(_quizTimer);
+            showPage('home');
+        }
     }
 });
 
