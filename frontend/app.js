@@ -328,9 +328,9 @@ $$('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const page = link.dataset.page;
-        if ((page === 'wrong' || page === 'practice') && !state.user) {
-            toast('请先登录哦~', 'error');
-            showPage('home');
+        if ((page === 'wrong' || page === 'practice' || page === 'report') && !state.user) {
+            openLoginModal('login');
+            toast('登录后就能用啦~', 'info');
             return;
         }
         if (page === 'report') loadReport();
@@ -347,39 +347,107 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// ========== 登录/注册 ==========
-$$('.form-tabs .tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        $$('.form-tabs .tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const mode = tab.dataset.tab;
-        $('#login-title').textContent = mode === 'login' ? '登录开始学习' : '注册新账号';
-        $('#auth-btn').textContent = mode === 'login' ? '登录' : '注册';
-        $('#auth-btn').dataset.mode = mode;
-        $('#grade-select-wrap').style.display = mode === 'register' ? 'block' : 'none';
+// ========== 登录/注册 弹窗 ==========
+let _authMode = 'login';  // 当前模式:'login' 或 'register'
+
+function openLoginModal(mode = 'login') {
+    setAuthMode(mode);
+    $('#login-modal').style.display = 'flex';
+    setTimeout(() => $('#modal-username').focus(), 100);
+    // 打开时把 body 锁滚动
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLoginModal() {
+    $('#login-modal').style.display = 'none';
+    document.body.style.overflow = '';
+    // 清空表单
+    $('#modal-username').value = '';
+    $('#modal-password').value = '';
+}
+
+function setAuthMode(mode) {
+    _authMode = mode;
+    $$('#modal-tabs .tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === mode);
+    });
+    if (mode === 'login') {
+        $('#modal-title').textContent = '欢迎回到数学乐园';
+        $('#modal-sub').textContent = '登录后继续你的冒险之旅';
+        $('#modal-submit-text').textContent = '登录';
+        $('#modal-grade-field').style.display = 'none';
+    } else {
+        $('#modal-title').textContent = '加入数学乐园';
+        $('#modal-sub').textContent = '注册后开启专属学习计划';
+        $('#modal-submit-text').textContent = '注册';
+        $('#modal-grade-field').style.display = 'flex';
+    }
+}
+
+// 打开弹窗
+$('#btn-open-login').addEventListener('click', () => openLoginModal('login'));
+
+// 关闭弹窗
+$('#modal-close').addEventListener('click', closeLoginModal);
+$('#login-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'login-modal') closeLoginModal();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('#login-modal').style.display === 'flex') {
+        closeLoginModal();
+    }
+});
+
+// 模式切换
+$$('#modal-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => setAuthMode(tab.dataset.tab));
+});
+
+// 年级 pill
+$$('.grade-pill').forEach(p => {
+    p.addEventListener('click', () => {
+        $$('.grade-pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
     });
 });
 
-$('#auth-btn').addEventListener('click', async () => {
-    const mode = $('#auth-btn').dataset.mode || 'login';
-    const username = $('#username').value.trim();
-    const password = $('#password').value;
+// 提交
+$('#modal-submit').addEventListener('click', async () => {
+    const mode = _authMode;
+    const username = $('#modal-username').value.trim();
+    const password = $('#modal-password').value;
 
     if (!username || !password) return toast('请填写用户名和密码', 'error');
+    if (username.length < 2) return toast('用户名至少 2 个字符', 'error');
+    if (password.length < 4) return toast('密码至少 4 个字符', 'error');
 
     const body = { username, password };
-    if (mode === 'register') body.grade = parseInt($('#reg-grade').value);
+    if (mode === 'register') {
+        const activePill = document.querySelector('.grade-pill.active');
+        body.grade = activePill ? parseInt(activePill.dataset.grade) : 1;
+    }
+
+    const submitBtn = $('#modal-submit');
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
 
     const res = await apiRouter[mode](body);
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '';
+
     if (res.code === 0) {
         state.user = res.data;
         renderUser();
+        closeLoginModal();
         toast(res.msg, 'success');
-        $('#username').value = '';
-        $('#password').value = '';
     } else {
         toast(res.msg, 'error');
     }
+});
+
+// Enter 键提交
+$('#modal-password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('#modal-submit').click();
 });
 
 async function checkLogin() {
@@ -387,16 +455,19 @@ async function checkLogin() {
     if (res.code === 0 && res.data) {
         state.user = res.data;
     }
-    renderUser();  // 无论登录与否都调一次,确保 UI 状态正确
+    renderUser();
 }
 
 function renderUser() {
+    const navLoginBtn = $('#btn-open-login');
     if (!state.user) {
-        $('#login-card').style.display = 'block';
+        // 未登录:nav 显示登录按钮,user-info-card 隐藏
+        if (navLoginBtn) navLoginBtn.hidden = false;
         $('#user-info-card').style.display = 'none';
         return;
     }
-    $('#login-card').style.display = 'none';
+    // 已登录
+    if (navLoginBtn) navLoginBtn.hidden = true;
     $('#user-info-card').style.display = 'block';
     $('#user-avatar').textContent = state.user.avatar;
     $('#user-name').textContent = state.user.username;
@@ -426,7 +497,8 @@ $(document).on('click', '#btn-logout', async () => {
 $$('.action-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         if (!state.user) {
-            toast('请先登录哦~', 'error');
+            openLoginModal('login');
+            toast('先登录一下就能开始啦~', 'info');
             return;
         }
         const action = btn.dataset.action;

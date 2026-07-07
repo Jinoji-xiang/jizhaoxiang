@@ -94,6 +94,9 @@
             <a href="#" class="nav-link" data-page="report">
                 <svg><use href="#i-bar"/></svg>学习报告
             </a>
+            <button class="nav-login-btn" id="btn-open-login">
+                <svg><use href="#i-sparkle"/></svg>登录
+            </button>
         </div>
     </nav>
 
@@ -106,27 +109,7 @@
                 <h1 class="hero-title">Hi, <span class="name" id="user-name">小朋友</span> 👋</h1>
                 <p class="hero-sub">今天也要加油哦 · 当前年级 <b id="user-grade">一年级</b></p>
 
-                <!-- 登录/注册卡片 -->
-                <div class="login-card" id="login-card" style="display:none">
-                    <h2 id="login-title">登录开始学习</h2>
-                    <div class="form-tabs">
-                        <span class="tab active" data-tab="login">登录</span>
-                        <span class="tab" data-tab="register">注册</span>
-                    </div>
-                    <input type="text" id="username" placeholder="用户名(2位以上)" autocomplete="username" />
-                    <input type="password" id="password" placeholder="密码(4位以上)" autocomplete="current-password" />
-                    <div id="grade-select-wrap" style="display:none">
-                        <label>选择年级</label>
-                        <select id="reg-grade">
-                            <option value="1">一年级</option>
-                            <option value="2">二年级</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" id="auth-btn" style="width:100%">
-                        <svg><use href="#i-arrow"/></svg>登录
-                    </button>
-                    <p class="tip">新用户请点击上方"注册"标签</p>
-                </div>
+                <!-- 提示:已登录后会显示 user-info-card,未登录请点右上角"登录"按钮 -->
 
                 <!-- 用户信息 + 统计 -->
                 <div id="user-info-card" style="display:none">
@@ -360,6 +343,48 @@
     </main>
 
     <div class="toast" id="toast"></div>
+
+    <!-- 登录/注册 弹窗 -->
+    <div class="modal-overlay" id="login-modal" style="display:none">
+        <div class="modal-dialog">
+            <button class="modal-close" id="modal-close" aria-label="关闭">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <div class="modal-emoji">🚀</div>
+                <h2 class="modal-title" id="modal-title">欢迎来到数学乐园</h2>
+                <p class="modal-sub" id="modal-sub">登录后开始你的冒险之旅</p>
+            </div>
+            <div class="form-tabs" id="modal-tabs">
+                <span class="tab active" data-tab="login">登录</span>
+                <span class="tab" data-tab="register">注册</span>
+            </div>
+            <div class="modal-form">
+                <label class="field">
+                    <span class="field-label">用户名</span>
+                    <input type="text" id="modal-username" placeholder="至少 2 个字符" autocomplete="username" />
+                </label>
+                <label class="field">
+                    <span class="field-label">密码</span>
+                    <input type="password" id="modal-password" placeholder="至少 4 个字符" autocomplete="current-password" />
+                </label>
+                <div class="field" id="modal-grade-field" style="display:none">
+                    <span class="field-label">选择年级</span>
+                    <div class="grade-pills">
+                        <button type="button" class="grade-pill active" data-grade="1">一年级</button>
+                        <button type="button" class="grade-pill" data-grade="2">二年级</button>
+                    </div>
+                </div>
+                <button class="btn-primary modal-submit" id="modal-submit">
+                    <svg><use href="#i-arrow"/></svg>
+                    <span id="modal-submit-text">登录</span>
+                </button>
+            </div>
+            <p class="modal-tip">首次使用?点击上方"注册"标签创建账号</p>
+        </div>
+    </div>
 
     <script src="data/questions.js"></script>
     <script src="app.js"></script>
