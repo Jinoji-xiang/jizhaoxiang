@@ -896,6 +896,8 @@ $('#btn-submit').addEventListener('click', async () => {
                 showBattleEnd(true);
             } else {
                 $('#btn-next').style.display = 'flex';
+                // 解锁答题区 — 否则 继续 按钮点不到 (pointer-events: none 阻断)
+                if (bq) bq.classList.remove('locked');
                 battleState = BATTLE.PLAYER_TURN;
             }
         }, 1200);
@@ -940,6 +942,8 @@ $('#btn-submit').addEventListener('click', async () => {
                 showBattleEnd(false);
             } else {
                 $('#btn-next').style.display = 'flex';
+                // 解锁答题区 — 否则 继续 按钮点不到 (pointer-events: none 阻断)
+                if (bq) bq.classList.remove('locked');
                 battleState = BATTLE.PLAYER_TURN;
             }
         }, 1100);
