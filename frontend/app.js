@@ -406,6 +406,22 @@ function renderUser() {
     $('#stat-accuracy').textContent = state.user.accuracy + '%';
 }
 
+// 退出登录
+$(document).on('click', '#btn-logout', async () => {
+    if (!confirm('确定要退出登录吗？退出后会清除本地数据，需要重新登录。')) return;
+    await apiRouter.logout();
+    // 离线模式清理
+    try {
+        sessionStorage.removeItem('offline_user_id');
+        localStorage.removeItem('math_quiz_users');
+        localStorage.removeItem('math_quiz_records');
+    } catch (e) {}
+    state.user = null;
+    renderUser();
+    showPage('home');
+    toast('已退出登录', 'success');
+});
+
 // ========== 快捷操作 ==========
 $$('.action-btn').forEach(btn => {
     btn.addEventListener('click', async () => {

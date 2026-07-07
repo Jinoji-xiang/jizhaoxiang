@@ -327,6 +327,28 @@ input:focus, select:focus {
 }
 .tip { text-align: center; color: var(--text-mute); font-size: 12px; margin-top: 12px; }
 
+/* 退出登录按钮 */
+.btn-logout {
+  margin-top: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: inherit;
+}
+.btn-logout:hover {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: #B91C1C;
+}
+.btn-logout svg { width: 14px; height: 14px; }
+
 /* ============== 快捷操作 ============== */
 .quick-actions {
   display: grid;
