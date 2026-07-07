@@ -666,8 +666,8 @@ function renderQuestion() {
 
         $('#q-current').textContent = p.currentIndex + 1;
         $('#q-total').textContent = p.questions.length;
-        $('#right-count').textContent = p.rightCount;
-        $('#wrong-count').textContent = p.wrongCount;
+        // 注:旧版有 #right-count / #wrong-count / #progress-fill,战斗模式改版后已移除
+        // 如需"答对/答错"实时计数,可在 #battle-hud 增加对应元素后恢复
 
         // 更新进度条
         const fill = $('#progress-fill');
@@ -1006,6 +1006,20 @@ async function loadWrongQuestions() {
 async function startWrongPractice() {
     const res = await apiRouter.practiceWrong({ count: 10 });
     if (res.code !== 0) return toast(res.msg, 'error');
+
+    // 战斗数据(与 startPractice 保持一致)
+    const monster = pickMonster();
+    battleData = {
+        monsterMaxHp: res.data.length * 10,
+        monsterHp: res.data.length * 10,
+        hearts: 3,
+        maxHearts: 3,
+        score: 0,
+        combo: 0,
+        maxCombo: 0
+    };
+    battleState = BATTLE.PLAYER_TURN;
+
     state.practice = {
         questions: res.data,
         currentIndex: 0,
@@ -1014,11 +1028,26 @@ async function startWrongPractice() {
         answers: [],
         startedAt: Date.now(),
         questionStartTime: Date.now(),
-        source: 'wrong'
+        source: 'wrong',
+        monster
     };
     showPage('practice');
     $('#question-card').style.display = 'block';
     $('#result-card').style.display = 'none';
+
+    // 初始化战斗 HUD
+    $('#monster-name-bar').textContent = monster.name;
+    updateMonsterHp();
+    updateHearts();
+    updateCombo();
+    updateScore();
+    $('#q-total').textContent = res.data.length;
+    $('#monster-sprite').classList.remove('dying', 'hurt');
+    $('#monster-sprite').classList.add('idle');
+    $('#player-sprite').classList.remove('attacking', 'charging', 'hurt');
+    $('#player-sprite').classList.add('idle');
+    $('#damage-numbers').innerHTML = '';
+
     renderQuestion();
     startTimer();
 }

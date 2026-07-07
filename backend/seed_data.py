@@ -326,7 +326,7 @@ GRADE_2 = [
     {'grade':2,'knowledge':'乘法口诀','question_type':'fill','content':'根据口诀"三五十五"写出两个乘法算式','options':None,'answer':'3×5=15,5×3=15','explanation':'三五十五,3×5=15或5×3=15','difficulty':2},
     {'grade':2,'knowledge':'乘法口诀','question_type':'fill','content':'根据口诀"六七四十二"写出两个乘法算式','options':None,'answer':'6×7=42,7×6=42','explanation':'六七四十二,6×7=42或7×6=42','difficulty':2},
     {'grade':2,'knowledge':'乘法口诀','question_type':'choice','content':'与4×6同一句口诀的是?','options':opts('四六二十四','六四二十四','四六二十','四六三十六'),'answer':'四六二十四','explanation':'4×6=24,口诀"四六二十四"','difficulty':2},
-    {'grade':2,'knowledge':'乘法口诀','question_type':'fill','content':'一只手套5个手指,8只手套共几个手指?用口诀:()','options':None,'answer':'五八四十','explanation':'五八四十,即5×8=40','difficulty':2},
+    {'grade':2,'knowledge':'乘法口诀','question_type':'fill','content':'一只手5个手指,8只手共几个手指?用口诀:()','options':None,'answer':'五八四十','explanation':'五八四十,即5×8=40','difficulty':2},
 
     # ===== 乘加乘减混合 (6 道) =====
     {'grade':2,'knowledge':'乘加乘减','question_type':'fill','content':'3 × 4 + 5 = ?','options':None,'answer':'17','explanation':'先乘后加,3×4=12,12+5=17','difficulty':2},
