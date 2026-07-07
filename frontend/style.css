@@ -1193,7 +1193,7 @@ input:focus, select:focus {
   100% { transform: translateX(calc(100vw + 100px)); }
 }
 
-/* 玩家立绘 - 用用户注册时选的人物图片 */
+/* 玩家立绘 - 用用户注册时选的人物图片 (已抠白底) */
 .player-sprite {
   position: absolute;
   left: 8%;
@@ -1212,9 +1212,7 @@ input:focus, select:focus {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* AI 生成的图是白底, 用 multiply 把白色透明化, 保留角色线条/颜色 */
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
 }
 
 .player-sprite.idle {
@@ -1240,9 +1238,9 @@ input:focus, select:focus {
 }
 .player-sprite.hurt { animation: playerHurt 0.4s; }
 @keyframes playerHurt {
-  0%, 100% { transform: translateX(0); filter: brightness(1) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
-  25% { transform: translateX(-12px) rotate(-3deg); filter: brightness(1.3) hue-rotate(320deg) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
-  75% { transform: translateX(8px) rotate(2deg); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(0,0,0,0.18)); }
+  0%, 100% { transform: translateX(0); filter: brightness(1) drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+  25% { transform: translateX(-12px) rotate(-3deg); filter: brightness(1.3) hue-rotate(320deg) drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+  75% { transform: translateX(8px) rotate(2deg); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
 }
 
 /* 怪兽立绘 - 史莱姆 单 div + 渐变 */
